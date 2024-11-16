@@ -1,26 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
-public abstract class DropOperationBase : AvaloniaObject, IDropOperation
+public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 {
-    public static readonly StyledProperty<object?> DropTargetProperty =
-        AvaloniaProperty.Register<DropOperationBase, object?>(nameof(DropTarget), defaultBindingMode: BindingMode.OneWayToSource);
-
-    /// <summary>
-    /// DropTarget is updated with the Payload that was registered by the DragOperation
-    /// </summary>
-    public object? DropTarget
-    {
-        get => GetValue(DropTargetProperty);
-        set => SetValue(DropTargetProperty, value);
-    }
-
     public IdList InteractionIds { get; set; } = [DragDropIds.DefaultOperation];
     public Control? AttachedControl { get; private set; }
     public object? Context { get; set; }
@@ -30,9 +16,12 @@ public abstract class DropOperationBase : AvaloniaObject, IDropOperation
         ThrowIf.NotNull(AttachedControl);
 
         AttachedControl = control;
-
         AvaDragDrop.SetAllowDrop(control, true);
         SubscribeDropEvents(control);
+
+        DropAdorner = DropAdorner ?? new DropHighlightAdorner();
+        if (DropAdorner.TargetControl is null)
+            DropAdorner.TargetControl = AttachedControl;
     }
 
     public void Detach(Control control)
@@ -40,7 +29,7 @@ public abstract class DropOperationBase : AvaloniaObject, IDropOperation
         if (AttachedControl is null)
             return;
 
-        AvaDragDrop.SetAllowDrop(control, true);
+        AvaDragDrop.SetAllowDrop(control, false);
         UnsubscribeDropEvents(control);
         AttachedControl = null;
     }
@@ -71,31 +60,27 @@ public abstract class DropOperationBase : AvaloniaObject, IDropOperation
             return;
         }
 
-        if (sender is Control c)
-        {
-            c = c.GetLogicalParent() as Control ?? c;
-            ((IPseudoClasses)c.Classes).Set(":dragOver", true);
-        }
+        ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", true);
+        DropAdorner?.Attach();
     }
 
     protected virtual void DragLeave(object? sender, RoutedEventArgs e)
     {
-        if (sender is Control c)
-        {
-            c = c.GetLogicalParent() as Control ?? c;
-            ((IPseudoClasses)c.Classes).Set(":dragOver", false);
-        }
+        ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
+        DropAdorner?.Detach();
     }
 
     protected virtual void DragOver(object? sender, DragEventArgs e)
     {
         var payload = InteractionIds.Select(e.Data.Get).FirstOrDefault();
-        var metadata = e.Data.Get(DragDropIds.DropMetadata) as DragMetadata;
+        var metadata = e.Data.Get(DragDropIds.DragMetadata) as DragMetadata;
 
         if (payload is null)
         {
             e.DragEffects = DragDropEffects.None;
         }
+
+        DropAdorner?.InvalidateVisual();
     }
 
     protected virtual void Drop(object? sender, DragEventArgs e)
@@ -106,5 +91,13 @@ public abstract class DropOperationBase : AvaloniaObject, IDropOperation
         {
             DropTarget = payload;
         }
+
+        ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
+        DropAdorner?.Detach();
+    }
+
+    protected virtual bool CanDrop()
+    {
+        return true;
     }
 }

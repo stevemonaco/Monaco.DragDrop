@@ -28,6 +28,17 @@ public static class ThrowIf
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public static void Null(object? value, string? message = default, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+    {
+        if (value is not null)
+            return;
+
+        if (message is not null)
+            throw new ArgumentException($"{message}: {valueExpression} was null");
+        throw new ArgumentException($"{valueExpression} was null");
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void NotNull(object? value, string? message = default, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
     {
         if (value is null)

@@ -4,26 +4,14 @@ using Avalonia.Input;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
-public abstract class DragOperationBase : AvaloniaObject, IDragOperation
+public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 {
-    public static readonly StyledProperty<object?> DragPayloadProperty =
-        AvaloniaProperty.Register<DragOperationBase, object?>(nameof(DragPayload));
-
-    /// <summary>
-    /// Object that is transferred via DragDrop. If null, this falls back to AttachedControl.DataContext.
-    /// </summary>
-    public object? DragPayload
-    {
-        get => GetValue(DragPayloadProperty);
-        set => SetValue(DragPayloadProperty, value);
-    }
-
     public IList<string> InteractionIds { get; set; } = [DragDropIds.DefaultOperation];
     public Control? AttachedControl { get; private set; }
 
     private Control? _trackedControl; // Control that has been clicked and may be initiating a drag
     private Point? _dragOrigin;
-    private bool _isCaptured; // True if Control has been clicked, mouse is being held, but drag has not started yet
+    private bool _isDragPending; // True if Control has been clicked, mouse is being held, but drag operation has not started yet
 
     public void Attach(Control control)
     {
@@ -58,7 +46,7 @@ public abstract class DragOperationBase : AvaloniaObject, IDragOperation
 
     protected virtual void Control_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Control c || _isCaptured)
+        if (sender is not Control c || _isDragPending)
             return;
 
         var point = e.GetCurrentPoint(c);
@@ -75,7 +63,7 @@ public abstract class DragOperationBase : AvaloniaObject, IDragOperation
     protected virtual void Control_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _dragOrigin = null;
-        _isCaptured = false;
+        _isDragPending = false;
     }
 
     protected virtual async void Control_PointerMoved(object? sender, PointerEventArgs e)
@@ -88,10 +76,10 @@ public abstract class DragOperationBase : AvaloniaObject, IDragOperation
 
         var local = e.GetCurrentPoint(_trackedControl);
         var delta = local.Position - _dragOrigin.Value;
-        if (delta.X * delta.X + delta.Y * delta.Y < 16)
+        if (delta.X * delta.X + delta.Y * delta.Y < DragThreshold * DragThreshold)
             return;
 
-        if (!_isCaptured)
+        if (!_isDragPending)
             await StartDrag(e);
     }
 
@@ -109,7 +97,7 @@ public abstract class DragOperationBase : AvaloniaObject, IDragOperation
 
         _trackedControl = null;
         _dragOrigin = null;
-        _isCaptured = false;
+        _isDragPending = false;
 
         await DoDragDrop(e, metadata, payload);
     }
@@ -120,7 +108,7 @@ public abstract class DragOperationBase : AvaloniaObject, IDragOperation
         foreach (var id in InteractionIds)
             data.Set(id, payload);
 
-        data.Set(DragDropIds.DropMetadata, metadata);
+        data.Set(DragDropIds.DragMetadata, metadata);
 
         var effect = DragDropEffects.Move;
         await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
