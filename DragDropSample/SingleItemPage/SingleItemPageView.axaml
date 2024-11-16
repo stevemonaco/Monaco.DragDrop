@@ -1,0 +1,110 @@
+<UserControl
+    x:Class="DragDropSample.Views.SingleItemPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:DragDropSample.ViewModels"
+    x:Name="root"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:SingleItemPageViewModel"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="StackPanel.list > Border">
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="BorderBrush" Value="Orange" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="*,8,*">
+        <StackPanel Classes="list">
+            <TextBlock FontWeight="Bold" Text="Meal Choices" />
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceA}" InteractionIds="meal" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding MealChoiceA}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceB}" InteractionIds="meal" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding MealChoiceB}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceC}" InteractionIds="meal" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding MealChoiceC}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceD}" InteractionIds="meal" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding MealChoiceD}" />
+            </Border>
+
+            <TextBlock
+                Margin="0,8,0,8"
+                FontWeight="Bold"
+                Text="Drink Choices" />
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceA}" InteractionIds="drink" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding DrinkChoiceA}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceB}" InteractionIds="drink" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding DrinkChoiceB}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceC}" InteractionIds="drink" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding DrinkChoiceC}" />
+            </Border>
+            <Border>
+                <dd:DragDrop.DragOperation>
+                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceD}" InteractionIds="drink" />
+                </dd:DragDrop.DragOperation>
+                <TextBlock Text="{Binding DrinkChoiceD}" />
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Classes="list">
+            <TextBlock FontWeight="Bold" Text="Selected Meal" />
+            <Border Background="Transparent">
+                <dd:DragDrop.DropOperation>
+                    <dd:DropOperation DropTarget="{Binding #root.((vm:SingleItemPageViewModel)DataContext).SelectedMeal}" InteractionIds="meal" />
+                </dd:DragDrop.DropOperation>
+                <StackPanel>
+                    <TextBlock Text="Drop Area" />
+                    <TextBlock Text="{Binding SelectedMeal, StringFormat={}{0}, TargetNullValue=N/A}" />
+                    <Button Command="{Binding RemoveMealCommand}" Content="Remove Meal" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock
+                Margin="0,8,0,8"
+                FontWeight="Bold"
+                Text="Selected Drink" />
+            <Border Background="Transparent">
+                <dd:DragDrop.DropOperation>
+                    <dd:DropOperation DropTarget="{Binding #root.((vm:SingleItemPageViewModel)DataContext).SelectedDrink}" InteractionIds="drink" />
+                </dd:DragDrop.DropOperation>
+                <StackPanel>
+                    <TextBlock Text="Drop Area" />
+                    <TextBlock Text="{Binding SelectedDrink, StringFormat={}{0}, TargetNullValue=N/A}" />
+                    <Button Command="{Binding RemoveDrinkCommand}" Content="Remove Drink" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>
