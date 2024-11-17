@@ -4,16 +4,16 @@ using Avalonia;
 namespace Monaco.DragDrop.Abstractions;
 public abstract partial class DropOperationBase
 {
-    public static readonly StyledProperty<object?> DropTargetProperty =
-    AvaloniaProperty.Register<DropOperationBase, object?>(nameof(DropTarget), defaultBindingMode: BindingMode.OneWayToSource);
+    public static readonly StyledProperty<object?> PayloadTargetProperty =
+    AvaloniaProperty.Register<DropOperationBase, object?>(nameof(PayloadTarget), defaultBindingMode: BindingMode.OneWayToSource);
 
     /// <summary>
-    /// DropTarget is updated with the Payload that was registered by the DragOperation
+    /// PayloadTarget will be assigned the Payload that was registered by the DragOperation when the Drop is applied
     /// </summary>
-    public object? DropTarget
+    public object? PayloadTarget
     {
-        get => GetValue(DropTargetProperty);
-        set => SetValue(DropTargetProperty, value);
+        get => GetValue(PayloadTargetProperty);
+        set => SetValue(PayloadTargetProperty, value);
     }
 
     public static readonly StyledProperty<DropAdornerBase?> DropAdornerProperty =

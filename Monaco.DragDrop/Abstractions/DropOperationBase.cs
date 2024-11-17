@@ -86,7 +86,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
         if (payload is not null)
         {
-            DropTarget = payload;
+            PayloadTarget = payload;
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
