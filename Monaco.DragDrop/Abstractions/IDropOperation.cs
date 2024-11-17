@@ -3,7 +3,7 @@
 namespace Monaco.DragDrop.Abstractions;
 public interface IDropOperation
 {
-    IdList InteractionIds { get; set; }
+    IList<string> InteractionIds { get; set; }
     Control? AttachedControl { get; }
 
     void Attach(Control control);

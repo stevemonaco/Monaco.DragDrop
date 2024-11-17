@@ -92,7 +92,8 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
         var metadata = new DragMetadata()
         {
-            DragOrigin = _dragOrigin.Value
+            DragOrigin = _dragOrigin.Value,
+            DragIds = InteractionIds.ToList()
         };
 
         _trackedControl = null;
