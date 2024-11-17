@@ -1,15 +1,20 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="DragDropSample.App"
-             xmlns:local="using:DragDropSample"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+<Application
+    x:Class="DragDropSample.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:local="using:DragDropSample"
+    RequestedThemeVariant="Default">
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
+
+        <!--<Style Selector="dd|DropHighlightAdorner">
+            <Setter Property="BorderBrush" Value="Yellow" />
+            <Setter Property="BorderThickness" Value="20" />
+        </Style>-->
     </Application.Styles>
 </Application>

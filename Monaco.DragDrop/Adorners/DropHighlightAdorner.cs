@@ -1,28 +1,28 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Immutable;
-using Avalonia.VisualTree;
 
 namespace Monaco.DragDrop;
 public class DropHighlightAdorner : DropAdornerBase
 {
-    public DropHighlightAdorner() //Control adornedControl) : base(adornedControl)
+    static DropHighlightAdorner()
     {
-        Opacity = 0.7;
+        OpacityProperty.OverrideDefaultValue<DropHighlightAdorner>(0.7d);
+        BackgroundProperty.OverrideDefaultValue<DropHighlightAdorner>(Brushes.Green);
+        BorderBrushProperty.OverrideDefaultValue<DropHighlightAdorner>(Brushes.Purple);
+        BorderThicknessProperty.OverrideDefaultValue<DropHighlightAdorner>(new Thickness(2));
     }
 
-    public override void Render(DrawingContext context)
+    public override void Attach()
     {
-        ThrowIf.Null(TargetControl);
+        if (TargetControl is null)
+            return;
 
-        var root = (Window)TargetControl!.GetVisualRoot()!;
-        var bounds = TargetControl!.Bounds;
-        var point = TargetControl.TranslatePoint(bounds.TopLeft, root)!.Value;
+        base.Attach();
 
-        var pen = new ImmutablePen(0xFFFF0000);
-        var rect = new Rect(point.X - bounds.X, point.Y - bounds.Y, bounds.Width, bounds.Height);
+        var rect = GetAdornerRect();
 
-        context.DrawRectangle(Brushes.Green, pen, rect);
+        Width = rect.Width;
+        Height = rect.Height;
+        RenderTransform = new TranslateTransform(rect.X, rect.Y);
     }
 }

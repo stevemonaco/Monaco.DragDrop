@@ -54,7 +54,10 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     protected virtual void DragEnter(object? sender, DragEventArgs e)
     {
         if (!CanDrop(e))
+        {
+            e.DragEffects = DragDropEffects.None;
             return;
+        }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", true);
         DropAdorner?.Attach();
@@ -69,7 +72,10 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     protected virtual void DragOver(object? sender, DragEventArgs e)
     {
         if (!CanDrop(e))
+        {
+            e.DragEffects = DragDropEffects.None;
             return;
+        }
 
         DropAdorner?.InvalidateVisual();
     }

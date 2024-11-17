@@ -2,11 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 using Monaco.DragDrop.Abstractions;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop;
-public abstract class DropAdornerBase : Control
+public abstract class DropAdornerBase : Border, IDropAdorner
 {
     public static readonly StyledProperty<Control?> TargetControlProperty =
     AvaloniaProperty.Register<DropOperationBase, Control?>(nameof(TargetControl), defaultBindingMode: BindingMode.OneWayToSource);
@@ -26,21 +28,38 @@ public abstract class DropAdornerBase : Control
         AvaDragDrop.SetAllowDrop(this, false);
     }
 
-    public void Attach()
+    public virtual void Attach()
     {
         if (TargetControl is null)
             return;
 
         var layer = AdornerLayer.GetAdornerLayer(TargetControl);
-        layer?.Children.Add(this);
+        AdornerLayer.SetAdorner(TargetControl, this);
+        //Bind(AdornerLayer.AdornedElementProperty, new Binding(nameof(TargetControl)));
+
+        //layer?.Children.Add(this);
     }
 
-    public void Detach()
+    public virtual void Detach()
     {
         if (TargetControl is null)
             return;
 
         var layer = AdornerLayer.GetAdornerLayer(TargetControl);
-        layer?.Children.Remove(this);
+        AdornerLayer.SetAdorner(TargetControl, null);
+        //layer?.Children.Remove(this);
+    }
+
+    /// <summary>
+    /// Gets the rect overlaying the TargetControl in AdornerLayer coordinates
+    /// </summary>
+    /// <returns></returns>
+    public Rect GetAdornerRect()
+    {
+        var root = (Window)TargetControl!.GetVisualRoot()!;
+        var bounds = TargetControl!.Bounds;
+        var point = TargetControl.TranslatePoint(bounds.TopLeft, root)!.Value;
+
+        return new Rect(point.X - bounds.X, point.Y - bounds.Y, bounds.Width, bounds.Height);
     }
 }
