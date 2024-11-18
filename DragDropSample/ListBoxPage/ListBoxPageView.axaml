@@ -2,11 +2,14 @@
     x:Class="DragDropSample.Views.ListBoxPageView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cdd="using:DragDropSample.CustomDragDrop"
+    xmlns:con="using:DragDropSample.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="using:Monaco.DragDrop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="using:DragDropSample.Resources"
     xmlns:vm="using:DragDropSample.ViewModels"
+    x:Name="root"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:ListBoxPageViewModel"
@@ -16,11 +19,11 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <TextBlock Text="{Binding Name}" />
-                    <PathIcon
+                    <!--<PathIcon
                         Classes="vflip"
                         Data="{x:Static res:AppIcons.Age}"
                         ToolTip.Tip="Age" />
-                    <TextBlock Text="{Binding Age}" />
+                    <TextBlock Text="{Binding Age}" />-->
                     <PathIcon
                         Classes="vflip"
                         Data="{x:Static res:AppIcons.Gold}"
@@ -46,6 +49,9 @@
                         ToolTip.Tip="Combat" />
                     <TextBlock Text="{Binding CombatProficiency}" />
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding DislikedPeople, Converter={x:Static con:AppConverters.DislikedPeople}}" />
+                </StackPanel>
             </StackPanel>
         </DataTemplate>
     </UserControl.DataTemplates>
@@ -58,7 +64,7 @@
                 Grid.Row="1"
                 ItemsSource="{Binding AvailableStaff}">
                 <dd:DragDrop.DragOperation>
-                    <dd:CollectionDragOperation DragPayload="{Binding #staff.SelectedItem}" />
+                    <dd:CollectionDragOperation InteractionIds="mining, crafting, combat" Payload="{Binding #staff.SelectedItem}" />
                 </dd:DragDrop.DragOperation>
             </ListBox>
         </Grid>
@@ -68,8 +74,20 @@
             Grid.Row="0"
             Grid.Column="1"
             RowDefinitions="auto,*">
-            <TextBlock Text="Mining Team" />
-            <ListBox Grid.Row="1" ItemsSource="{Binding MiningTeam}" />
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="Mining Team" />
+                <TextBlock Text="{Binding MiningBudgetRemaining, StringFormat=Budget Remaining: {0}}" />
+                <TextBlock Text="{Binding MiningTeamProficiency, StringFormat=Proficiency: {0}}" />
+            </StackPanel>
+            <ListBox Grid.Row="1" ItemsSource="{Binding MiningTeam}">
+                <dd:DragDrop.DropOperation>
+                    <!--<dd:CollectionDropOperation InteractionIds="mining" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}" SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />-->
+                    <cdd:PersonDropOperation
+                        InteractionIds="mining"
+                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}"
+                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                </dd:DragDrop.DropOperation>
+            </ListBox>
         </Grid>
 
         <!--  Crafting Team  -->
@@ -77,8 +95,19 @@
             Grid.Row="1"
             Grid.Column="1"
             RowDefinitions="auto,*">
-            <TextBlock Text="Crafting Team" />
-            <ListBox Grid.Row="1" ItemsSource="{Binding CraftingTeam}" />
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="Crafting Team" />
+                <TextBlock Text="{Binding CraftingBudgetRemaining, StringFormat=Budget Remaining: {0}}" />
+                <TextBlock Text="{Binding CraftingTeamProficiency, StringFormat=Proficiency: {0}}" />
+            </StackPanel>
+            <ListBox Grid.Row="1" ItemsSource="{Binding CraftingTeam}">
+                <dd:DragDrop.DropOperation>
+                    <cdd:PersonDropOperation
+                        InteractionIds="crafting"
+                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CraftingTeam}"
+                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                </dd:DragDrop.DropOperation>
+            </ListBox>
         </Grid>
 
         <!--  Combat Team  -->
@@ -86,8 +115,19 @@
             Grid.Row="2"
             Grid.Column="1"
             RowDefinitions="auto,*">
-            <TextBlock Text="Combat Team" />
-            <ListBox Grid.Row="1" ItemsSource="{Binding CombatTeam}" />
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="Combat Team" />
+                <TextBlock Text="{Binding CombatBudgetRemaining, StringFormat=Budget Remaining: {0}}" />
+                <TextBlock Text="{Binding CombatTeamProficiency, StringFormat=Proficiency: {0}}" />
+            </StackPanel>
+            <ListBox Grid.Row="1" ItemsSource="{Binding CombatTeam}">
+                <dd:DragDrop.DropOperation>
+                    <cdd:PersonDropOperation
+                        InteractionIds="combat"
+                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CombatTeam}"
+                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                </dd:DragDrop.DropOperation>
+            </ListBox>
         </Grid>
     </Grid>
 </UserControl>

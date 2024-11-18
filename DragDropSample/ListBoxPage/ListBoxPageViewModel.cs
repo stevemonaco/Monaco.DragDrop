@@ -12,10 +12,38 @@ public partial class ListBoxPageViewModel : PageViewModel
     public ObservableCollection<PersonViewModel> CraftingTeam { get; } = [];
     public ObservableCollection<PersonViewModel> CombatTeam { get; } = [];
 
+    [ObservableProperty] private int _miningBudgetRemaining = _maxBudget;
+    [ObservableProperty] private int _craftingBudgetRemaining = _maxBudget;
+    [ObservableProperty] private int _combatBudgetRemaining = _maxBudget;
+
+    [ObservableProperty] private int _miningTeamProficiency;
+    [ObservableProperty] private int _craftingTeamProficiency;
+    [ObservableProperty] private int _combatTeamProficiency;
+
+    private const int _maxBudget = 20000;
+
     public ListBoxPageViewModel()
     {
         Title = "ListBox";
-        InitializeNewStaff(50);
+        InitializeNewStaff(30);
+
+        MiningTeam.CollectionChanged += (s, e) =>
+        {
+            MiningBudgetRemaining = _maxBudget - MiningTeam.Sum(x => x.Salary);
+            MiningTeamProficiency = MiningTeam.Select(x => x.MiningProficiency).OfType<int>().Sum();
+        };
+
+        CraftingTeam.CollectionChanged += (s, e) =>
+        {
+            CraftingBudgetRemaining = _maxBudget - CraftingTeam.Sum(x => x.Salary);
+            CraftingTeamProficiency = CraftingTeam.Select(x => x.CraftingProficiency).OfType<int>().Sum();
+        };
+
+        CombatTeam.CollectionChanged += (s, e) =>
+        {
+            CombatBudgetRemaining = _maxBudget - CombatTeam.Sum(x => x.Salary);
+            CombatTeamProficiency = CombatTeam.Select(x => x.CombatProficiency).OfType<int>().Sum();
+        };
     }
 
     private void InitializeNewStaff(int staffCount)
@@ -49,7 +77,7 @@ public partial class ListBoxPageViewModel : PageViewModel
             if (dislikedCount == 0)
                 continue;
             
-            person.DislikedPeople = new(peopleIndices.OrderBy(x => Random.Shared.Next()).Take(3).Select(x => people[x]));
+            person.DislikedPeople = new(peopleIndices.OrderBy(x => Random.Shared.Next()).Take(dislikedCount).Select(x => people[x]));
         }
 
         AvailableStaff = new(people);

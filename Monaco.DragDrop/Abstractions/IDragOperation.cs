@@ -5,7 +5,7 @@ public interface IDragOperation
 {
     IList<string> InteractionIds { get; set; }
     Control? AttachedControl { get; }
-    object? DragPayload { get; set; }
+    object? Payload { get; set; }
 
     void Attach(Control control);
     void Detach(Control control);

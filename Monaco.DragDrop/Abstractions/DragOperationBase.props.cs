@@ -3,20 +3,20 @@
 namespace Monaco.DragDrop.Abstractions;
 public abstract partial class DragOperationBase
 {
-    public static readonly StyledProperty<object?> DragPayloadProperty =
-        AvaloniaProperty.Register<DragOperationBase, object?>(nameof(DragPayload));
+    public static readonly StyledProperty<object?> PayloadProperty =
+        AvaloniaProperty.Register<DragOperationBase, object?>(nameof(Payload));
 
     /// <summary>
     /// Object that is transferred via DragDrop. If null, this falls back to AttachedControl.DataContext.
     /// </summary>
-    public object? DragPayload
+    public object? Payload
     {
-        get => GetValue(DragPayloadProperty);
-        set => SetValue(DragPayloadProperty, value);
+        get => GetValue(PayloadProperty);
+        set => SetValue(PayloadProperty, value);
     }
 
     public static readonly StyledProperty<int> DragThresholdProperty =
-        AvaloniaProperty.Register<DragOperationBase, int>(nameof(DragPayload), defaultValue: 4);
+        AvaloniaProperty.Register<DragOperationBase, int>(nameof(DragThreshold), defaultValue: 4);
 
     /// <summary>
     /// Threshold in pixels that the user must move a pressed pointer to initiate a drag operation

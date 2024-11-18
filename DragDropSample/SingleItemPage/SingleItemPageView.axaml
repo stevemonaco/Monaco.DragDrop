@@ -25,25 +25,25 @@
             <TextBlock FontWeight="Bold" Text="Meal Choices" />
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceA}" InteractionIds="meal" />
+                    <dd:DragOperation InteractionIds="meal" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceA}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding MealChoiceA}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceB}" InteractionIds="meal" />
+                    <dd:DragOperation InteractionIds="meal" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceB}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding MealChoiceB}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceC}" InteractionIds="meal" />
+                    <dd:DragOperation InteractionIds="meal" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceC}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding MealChoiceC}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceD}" InteractionIds="meal" />
+                    <dd:DragOperation InteractionIds="meal" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).MealChoiceD}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding MealChoiceD}" />
             </Border>
@@ -54,25 +54,25 @@
                 Text="Drink Choices" />
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceA}" InteractionIds="drink" />
+                    <dd:DragOperation InteractionIds="drink" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceA}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding DrinkChoiceA}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceB}" InteractionIds="drink" />
+                    <dd:DragOperation InteractionIds="drink" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceB}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding DrinkChoiceB}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceC}" InteractionIds="drink" />
+                    <dd:DragOperation InteractionIds="drink" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceC}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding DrinkChoiceC}" />
             </Border>
             <Border>
                 <dd:DragDrop.DragOperation>
-                    <dd:DragOperation DragPayload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceD}" InteractionIds="drink" />
+                    <dd:DragOperation InteractionIds="drink" Payload="{Binding #root.((vm:SingleItemPageViewModel)DataContext).DrinkChoiceD}" />
                 </dd:DragDrop.DragOperation>
                 <TextBlock Text="{Binding DrinkChoiceD}" />
             </Border>

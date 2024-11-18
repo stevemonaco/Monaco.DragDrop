@@ -7,7 +7,7 @@ public partial class PersonViewModel : ObservableObject
     public int PersonId { get; init; }
     public required string Name { get; init; }
     public int Age { get; init; }
-    public decimal Salary { get; init; }
+    public int Salary { get; init; }
     public int? MiningProficiency { get; init; }
     public int? CraftingProficiency { get; init; }
     public int? CombatProficiency { get; init; }

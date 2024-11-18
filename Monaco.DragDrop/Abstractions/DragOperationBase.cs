@@ -65,6 +65,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
     protected virtual void Control_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
+        _trackedControl = null;
         _dragOrigin = null;
         _isDragPending = false;
     }
@@ -88,7 +89,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
     protected virtual async Task StartDrag(PointerEventArgs e)
     {
-        var payload = DragPayload ?? AttachedControl?.DataContext;
+        var payload = Payload ?? AttachedControl?.DataContext;
 
         if (payload is null || _dragOrigin is null)
             return;
