@@ -20,7 +20,7 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="auto, *">
-        <TabStrip ItemsSource="{Binding Pages}">
+        <TabStrip ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage}">
             <TabStrip.ItemTemplate>
                 <DataTemplate x:DataType="vm:PageViewModel">
                     <TextBlock Text="{Binding Title}" />

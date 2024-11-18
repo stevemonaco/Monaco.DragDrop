@@ -1,0 +1,93 @@
+<UserControl
+    x:Class="DragDropSample.Views.ListBoxPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="using:DragDropSample.Resources"
+    xmlns:vm="using:DragDropSample.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:ListBoxPageViewModel"
+    mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="vm:PersonViewModel">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="{Binding Name}" />
+                    <PathIcon
+                        Classes="vflip"
+                        Data="{x:Static res:AppIcons.Age}"
+                        ToolTip.Tip="Age" />
+                    <TextBlock Text="{Binding Age}" />
+                    <PathIcon
+                        Classes="vflip"
+                        Data="{x:Static res:AppIcons.Gold}"
+                        ToolTip.Tip="Salary" />
+                    <TextBlock Text="{Binding Salary}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <PathIcon
+                        Classes="vflip"
+                        Data="{x:Static res:AppIcons.Mining}"
+                        ToolTip.Tip="Mining" />
+                    <TextBlock Text="{Binding MiningProficiency}" />
+                    <PathIcon
+                        Classes="vflip"
+                        Data="{x:Static res:AppIcons.Crafting}"
+                        IsVisible="{Binding CraftingProficiency, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        ToolTip.Tip="Crafting" />
+                    <TextBlock Text="{Binding CraftingProficiency}" />
+                    <PathIcon
+                        Classes="vflip"
+                        Data="{x:Static res:AppIcons.Combat}"
+                        IsVisible="{Binding CombatProficiency, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        ToolTip.Tip="Combat" />
+                    <TextBlock Text="{Binding CombatProficiency}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+    <Grid ColumnDefinitions="*, *" RowDefinitions="*,*,*">
+        <!--  Available Staff  -->
+        <Grid Grid.RowSpan="3" RowDefinitions="auto,*">
+            <TextBlock Text="Available Staff" />
+            <ListBox
+                x:Name="staff"
+                Grid.Row="1"
+                ItemsSource="{Binding AvailableStaff}">
+                <dd:DragDrop.DragOperation>
+                    <dd:CollectionDragOperation DragPayload="{Binding #staff.SelectedItem}" />
+                </dd:DragDrop.DragOperation>
+            </ListBox>
+        </Grid>
+
+        <!--  Mining Team  -->
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            RowDefinitions="auto,*">
+            <TextBlock Text="Mining Team" />
+            <ListBox Grid.Row="1" ItemsSource="{Binding MiningTeam}" />
+        </Grid>
+
+        <!--  Crafting Team  -->
+        <Grid
+            Grid.Row="1"
+            Grid.Column="1"
+            RowDefinitions="auto,*">
+            <TextBlock Text="Crafting Team" />
+            <ListBox Grid.Row="1" ItemsSource="{Binding CraftingTeam}" />
+        </Grid>
+
+        <!--  Combat Team  -->
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1"
+            RowDefinitions="auto,*">
+            <TextBlock Text="Combat Team" />
+            <ListBox Grid.Row="1" ItemsSource="{Binding CombatTeam}" />
+        </Grid>
+    </Grid>
+</UserControl>

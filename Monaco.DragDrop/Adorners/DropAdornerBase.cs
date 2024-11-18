@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Media;
 using Avalonia.VisualTree;
 using Monaco.DragDrop.Abstractions;
 using AvaDragDrop = Avalonia.Input.DragDrop;
@@ -35,9 +34,6 @@ public abstract class DropAdornerBase : Border, IDropAdorner
 
         var layer = AdornerLayer.GetAdornerLayer(TargetControl);
         AdornerLayer.SetAdorner(TargetControl, this);
-        //Bind(AdornerLayer.AdornedElementProperty, new Binding(nameof(TargetControl)));
-
-        //layer?.Children.Add(this);
     }
 
     public virtual void Detach()
@@ -47,7 +43,6 @@ public abstract class DropAdornerBase : Border, IDropAdorner
 
         var layer = AdornerLayer.GetAdornerLayer(TargetControl);
         AdornerLayer.SetAdorner(TargetControl, null);
-        //layer?.Children.Remove(this);
     }
 
     /// <summary>

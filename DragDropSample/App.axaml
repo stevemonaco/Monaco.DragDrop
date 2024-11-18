@@ -16,5 +16,17 @@
             <Setter Property="BorderBrush" Value="Yellow" />
             <Setter Property="BorderThickness" Value="20" />
         </Style>-->
+
+        <Style Selector="PathIcon.vflip">
+            <Setter Property="RenderTransform" Value="scaley(-1)" />
+        </Style>
+
+        <Style Selector="PathIcon.hflip">
+            <Setter Property="RenderTransform" Value="scalex(-1)" />
+        </Style>
+
+        <Style Selector="PathIcon.turn">
+            <Setter Property="RenderTransform" Value="scale(-1)" />
+        </Style>
     </Application.Styles>
 </Application>

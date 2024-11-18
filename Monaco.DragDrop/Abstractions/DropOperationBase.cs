@@ -11,6 +11,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     public Control? AttachedControl { get; private set; }
     public object? Context { get; set; }
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
+    protected bool _handledEventsToo = false;
 
     public void Attach(Control control)
     {
@@ -37,10 +38,10 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected virtual void SubscribeDropEvents(Control control)
     {
-        control.AddHandler(AvaDragDrop.DragEnterEvent, DragEnter, Routing);
-        control.AddHandler(AvaDragDrop.DragLeaveEvent, DragLeave, Routing);
-        control.AddHandler(AvaDragDrop.DragOverEvent, DragOver, Routing);
-        control.AddHandler(AvaDragDrop.DropEvent, Drop, Routing);
+        control.AddHandler(AvaDragDrop.DragEnterEvent, DragEnter, Routing, _handledEventsToo);
+        control.AddHandler(AvaDragDrop.DragLeaveEvent, DragLeave, Routing, _handledEventsToo);
+        control.AddHandler(AvaDragDrop.DragOverEvent, DragOver, Routing, _handledEventsToo);
+        control.AddHandler(AvaDragDrop.DropEvent, Drop, Routing, _handledEventsToo);
     }
 
     protected virtual void UnsubscribeDropEvents(Control control)

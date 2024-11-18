@@ -8,7 +8,8 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<PageViewModel> Pages { get; } = new()
     {
-        new SingleItemPageViewModel()
+        new SingleItemPageViewModel(),
+        new ListBoxPageViewModel()
     };
 
     [ObservableProperty] private PageViewModel _selectedPage;

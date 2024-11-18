@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
@@ -8,10 +9,12 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 {
     public IList<string> InteractionIds { get; set; } = [DragDropIds.DefaultOperation];
     public Control? AttachedControl { get; private set; }
+    public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
 
     private Control? _trackedControl; // Control that has been clicked and may be initiating a drag
     private Point? _dragOrigin;
     private bool _isDragPending; // True if Control has been clicked, mouse is being held, but drag operation has not started yet
+    protected bool _handledEventsToo = false;
 
     public void Attach(Control control)
     {
@@ -32,9 +35,9 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
     protected virtual void SubscribeDragEvents(Control control)
     {
-        control.AddHandler(InputElement.PointerPressedEvent, Control_PointerPressed);
-        control.AddHandler(InputElement.PointerMovedEvent, Control_PointerMoved);
-        control.AddHandler(InputElement.PointerReleasedEvent, Control_PointerReleased);
+        control.AddHandler(InputElement.PointerPressedEvent, Control_PointerPressed, Routing, _handledEventsToo);
+        control.AddHandler(InputElement.PointerMovedEvent, Control_PointerMoved, Routing, _handledEventsToo);
+        control.AddHandler(InputElement.PointerReleasedEvent, Control_PointerReleased, Routing, _handledEventsToo);
     }
 
     protected virtual void UnsubscribeDragEvents(Control control)
