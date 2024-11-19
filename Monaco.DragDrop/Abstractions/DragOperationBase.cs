@@ -11,9 +11,9 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
     public Control? AttachedControl { get; private set; }
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
 
-    private Control? _trackedControl; // Control that has been clicked and may be initiating a drag
-    private Point? _dragOrigin;
-    private bool _isDragPending; // True if Control has been clicked, mouse is being held, but drag operation has not started yet
+    protected Control? _trackedControl; // Control that has been clicked and may be initiating a drag
+    protected Point? _dragOrigin;
+    protected bool _isDragPending; // True if Control has been clicked, mouse is being held, but drag operation has not started yet
     protected bool _handledEventsToo = false;
 
     public void Attach(Control control)
@@ -94,11 +94,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         if (payload is null || _dragOrigin is null)
             return;
 
-        var metadata = new DragMetadata()
-        {
-            DragOrigin = _dragOrigin.Value,
-            DragIds = InteractionIds.ToList()
-        };
+        var metadata = CreateMetadata();
 
         _trackedControl = null;
         _dragOrigin = null;
@@ -117,5 +113,14 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
         var effect = DragDropEffects.Move;
         await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
+    }
+
+    protected virtual DragMetadata CreateMetadata()
+    {
+        return new DragMetadata()
+        {
+            DragOrigin = _dragOrigin!.Value,
+            DragIds = InteractionIds.ToList()
+        };
     }
 }

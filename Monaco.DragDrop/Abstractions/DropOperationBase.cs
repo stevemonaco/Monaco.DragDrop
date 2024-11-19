@@ -22,8 +22,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
         SubscribeDropEvents(control);
 
         DropAdorner = DropAdorner ?? new DropHighlightAdorner();
-        if (DropAdorner.TargetControl is null)
-            DropAdorner.TargetControl = AttachedControl;
+        DropAdorner.TargetControl = AttachedControl;
     }
 
     public void Detach(Control control)
@@ -54,14 +53,21 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected virtual void DragEnter(object? sender, DragEventArgs e)
     {
-        if (!CanDrop(e))
+        bool canDrop = CanDrop(e);
+
+        if (DropAdorner is not null)
+        {
+            DropAdorner.Attach();
+            DropAdorner.IsDropValid = canDrop;
+        }
+
+        if (!canDrop)
         {
             e.DragEffects = DragDropEffects.None;
             return;
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", true);
-        DropAdorner?.Attach();
     }
 
     protected virtual void DragLeave(object? sender, RoutedEventArgs e)
@@ -72,13 +78,19 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected virtual void DragOver(object? sender, DragEventArgs e)
     {
-        if (!CanDrop(e))
+        bool canDrop = CanDrop(e);
+
+        if (DropAdorner is not null)
+        {
+            DropAdorner.IsDropValid = canDrop;
+            DropAdorner.InvalidateVisual();
+        }
+
+        if (!canDrop)
         {
             e.DragEffects = DragDropEffects.None;
             return;
         }
-
-        DropAdorner?.InvalidateVisual();
     }
 
     /// <summary>
@@ -97,7 +109,12 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
-        DropAdorner?.Detach();
+
+        if (DropAdorner is not null)
+        {
+            DropAdorner.IsDropValid = false;
+            DropAdorner.Detach();
+        }
     }
 
     /// <summary>

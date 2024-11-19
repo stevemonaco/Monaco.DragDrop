@@ -13,13 +13,11 @@ public class PersonDropOperation : CollectionDropOperation
 {
     protected override bool CanDrop(DragEventArgs e)
     {
-        if (!CanGetPayload(e))
+        if (!CanGetPayload(e) || GetMetadata(e) is not { } metadata)
             return false;
 
-        var metadata = GetMetadata(e);
-
         // Ensure various data are available
-        if (SourceCollection is not ObservableCollection<PersonViewModel> personSource // Not necessary for this validation
+        if (metadata.PayloadCollection is not ObservableCollection<PersonViewModel> personSource // Not necessary for this validation
             || PayloadTarget is not ObservableCollection<PersonViewModel> personDest // Not necessary for this validation
             || GetPayload(e, metadata) is not PersonViewModel person
             || AttachedControl is not { DataContext: ListBoxPageViewModel vm })
@@ -28,9 +26,9 @@ public class PersonDropOperation : CollectionDropOperation
         // InteractionIds adds some extra necessary information since we didn't aggregate into a TeamViewModel
         return InteractionIds switch
         {
-            ["mining"] => Validate(person, person.MiningProficiency, vm.MiningTeam, vm.MiningBudgetRemaining),
-            ["crafting"] => Validate(person, person.CraftingProficiency, vm.CraftingTeam, vm.CraftingBudgetRemaining),
-            ["combat"] => Validate(person, person.CombatProficiency, vm.CombatTeam, vm.CombatBudgetRemaining),
+            ["app:mining"] => Validate(person, person.MiningProficiency, vm.MiningTeam, vm.MiningBudgetRemaining),
+            ["app:crafting"] => Validate(person, person.CraftingProficiency, vm.CraftingTeam, vm.CraftingBudgetRemaining),
+            ["app:combat"] => Validate(person, person.CombatProficiency, vm.CombatTeam, vm.CombatBudgetRemaining),
             _ => false
         };
     }
@@ -38,17 +36,30 @@ public class PersonDropOperation : CollectionDropOperation
     private bool Validate(PersonViewModel person, int? proficiency, ObservableCollection<PersonViewModel> team, int budgetRemaining)
     {
         if (proficiency is null) // Worker is not proficient in this area
+        {
+            DropAdorner!.ErrorMessage = "Worker is not proficient in this area";
             return false;
+        }
 
-        if (budgetRemaining - person.Salary < 0) // Team budget does not allow
+        if (budgetRemaining - person.Salary < 0)
+        {
+            DropAdorner!.ErrorMessage = "Team budget does not allow";
             return false;
+        }
 
-        if (person.DislikedPeople.Any(team.Contains)) // Person doesn't like working with someone in the team
+        if (person.DislikedPeople.Any(team.Contains))
+        {
+            DropAdorner!.ErrorMessage = $"{person.Name} doesn't like someone in the team";
             return false;
+        }
 
-        if (team.SelectMany(x => x.DislikedPeople).Contains(person)) // Team doesn't like person
+        if (team.SelectMany(x => x.DislikedPeople).Contains(person))
+        {
+            DropAdorner!.ErrorMessage = $"Someone in the team doesn't like {person.Name}";
             return false;
+        }
 
+        DropAdorner!.ErrorMessage = null;
         return true;
     }
 }

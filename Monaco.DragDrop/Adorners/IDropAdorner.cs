@@ -6,4 +6,6 @@ public interface IDropAdorner
     Control? TargetControl { get; set; }
     void Attach();
     void Detach();
+
+    bool IsDropValid { get; set; }
 }

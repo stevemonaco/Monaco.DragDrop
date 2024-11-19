@@ -1,12 +1,11 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Layout;
+using Avalonia;
 
 namespace Monaco.DragDrop;
-public class DropHighlightAdorner : DropAdornerBase
+public class DropInsertAdorner : DropAdornerBase
 {
-    static DropHighlightAdorner()
+    static DropInsertAdorner()
     {
         OpacityProperty.OverrideDefaultValue<DropHighlightAdorner>(0.7d);
         BackgroundProperty.OverrideDefaultValue<DropHighlightAdorner>(Brushes.Green);
@@ -24,23 +23,23 @@ public class DropHighlightAdorner : DropAdornerBase
         var rect = GetAdornerRect();
 
         Width = rect.Width;
-        Height = rect.Height;
-        RenderTransform = new TranslateTransform(rect.X, rect.Y);
+        Height = 4;
+        RenderTransform = new TranslateTransform(rect.X, rect.Y + TargetControl.Height);
 
-        Child = new TextBlock()
-        {
-            //[!TextBlock.TextProperty] = new Binding()
-            //{
-            //    Source = this,
-            //    Path = nameof(ErrorMessage)
-            //},
-            Text = ErrorMessage,
-            FontSize = 24,
-            Foreground = Brushes.White,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            TextWrapping = TextWrapping.Wrap
-        };
+        //Child = new TextBlock()
+        //{
+        //    //[!TextBlock.TextProperty] = new Binding()
+        //    //{
+        //    //    Source = this,
+        //    //    Path = nameof(ErrorMessage)
+        //    //},
+        //    Text = ErrorMessage,
+        //    FontSize = 24,
+        //    Foreground = Brushes.White,
+        //    HorizontalAlignment = HorizontalAlignment.Center,
+        //    VerticalAlignment = VerticalAlignment.Center,
+        //    TextWrapping = TextWrapping.Wrap
+        //};
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

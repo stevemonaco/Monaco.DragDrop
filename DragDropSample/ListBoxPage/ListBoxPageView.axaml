@@ -64,7 +64,10 @@
                 Grid.Row="1"
                 ItemsSource="{Binding AvailableStaff}">
                 <dd:DragDrop.DragOperation>
-                    <dd:CollectionDragOperation InteractionIds="mining, crafting, combat" Payload="{Binding #staff.SelectedItem}" />
+                    <dd:CollectionDragOperation
+                        InteractionIds="app:mining, app:crafting, app:combat"
+                        Payload="{Binding #staff.SelectedItem}"
+                        PayloadCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
                 </dd:DragDrop.DragOperation>
             </ListBox>
         </Grid>
@@ -82,10 +85,7 @@
             <ListBox Grid.Row="1" ItemsSource="{Binding MiningTeam}">
                 <dd:DragDrop.DropOperation>
                     <!--<dd:CollectionDropOperation InteractionIds="mining" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}" SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />-->
-                    <cdd:PersonDropOperation
-                        InteractionIds="mining"
-                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}"
-                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                    <cdd:PersonDropOperation InteractionIds="app:mining" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}" />
                 </dd:DragDrop.DropOperation>
             </ListBox>
         </Grid>
@@ -102,10 +102,7 @@
             </StackPanel>
             <ListBox Grid.Row="1" ItemsSource="{Binding CraftingTeam}">
                 <dd:DragDrop.DropOperation>
-                    <cdd:PersonDropOperation
-                        InteractionIds="crafting"
-                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CraftingTeam}"
-                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                    <cdd:PersonDropOperation InteractionIds="app:crafting" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CraftingTeam}" />
                 </dd:DragDrop.DropOperation>
             </ListBox>
         </Grid>
@@ -122,10 +119,7 @@
             </StackPanel>
             <ListBox Grid.Row="1" ItemsSource="{Binding CombatTeam}">
                 <dd:DragDrop.DropOperation>
-                    <cdd:PersonDropOperation
-                        InteractionIds="combat"
-                        PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CombatTeam}"
-                        SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                    <cdd:PersonDropOperation InteractionIds="app:combat" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).CombatTeam}" />
                 </dd:DragDrop.DropOperation>
             </ListBox>
         </Grid>

@@ -80,6 +80,6 @@ public partial class ListBoxPageViewModel : PageViewModel
             person.DislikedPeople = new(peopleIndices.OrderBy(x => Random.Shared.Next()).Take(dislikedCount).Select(x => people[x]));
         }
 
-        AvailableStaff = new(people);
+        AvailableStaff = new(people.OrderBy(x => x.Name));
     }
 }

@@ -1,0 +1,42 @@
+<UserControl
+    x:Class="DragDropSample.Views.SimpleCollectionPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:DragDropSample.ViewModels"
+    x:Name="root"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:SimpleCollectionPageViewModel"
+    mc:Ignorable="d">
+    <Grid ColumnDefinitions="*,*">
+        <ListBox x:Name="leftBox" ItemsSource="{Binding LeftGuids}">
+            <dd:DragDrop.DragOperation>
+                <dd:CollectionDragOperation
+                    InteractionIds="app:guid"
+                    Payload="{Binding #leftBox.SelectedItem}"
+                    PayloadCollection="{Binding #root.((vm:SimpleCollectionPageViewModel)DataContext).LeftGuids}" />
+            </dd:DragDrop.DragOperation>
+            <dd:DragDrop.DropOperation>
+                <dd:CollectionDropOperation InteractionIds="app:guid" PayloadTarget="{Binding #root.((vm:SimpleCollectionPageViewModel)DataContext).LeftGuids}" />
+            </dd:DragDrop.DropOperation>
+        </ListBox>
+
+        <ListBox
+            x:Name="rightBox"
+            Grid.Column="1"
+            ItemsSource="{Binding RightGuids}">
+            <dd:DragDrop.DragOperation>
+                <dd:CollectionDragOperation
+                    InteractionIds="app:guid"
+                    Payload="{Binding #rightBox.SelectedItem}"
+                    PayloadCollection="{Binding #root.((vm:SimpleCollectionPageViewModel)DataContext).RightGuids}" />
+            </dd:DragDrop.DragOperation>
+            <dd:DragDrop.DropOperation>
+                <dd:CollectionDropOperation InteractionIds="app:guid" PayloadTarget="{Binding #root.((vm:SimpleCollectionPageViewModel)DataContext).RightGuids}" />
+            </dd:DragDrop.DropOperation>
+        </ListBox>
+    </Grid>
+</UserControl>

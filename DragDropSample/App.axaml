@@ -12,10 +12,14 @@
     <Application.Styles>
         <FluentTheme />
 
-        <!--<Style Selector="dd|DropHighlightAdorner">
-            <Setter Property="BorderBrush" Value="Yellow" />
-            <Setter Property="BorderThickness" Value="20" />
-        </Style>-->
+        <Style Selector="dd|DropHighlightAdorner">
+            <!--<Setter Property="BorderBrush" Value="Yellow" />
+            <Setter Property="BorderThickness" Value="20" />-->
+
+            <Style Selector="^:error">
+                <Setter Property="Background" Value="Red" />
+            </Style>
+        </Style>
 
         <Style Selector="PathIcon.vflip">
             <Setter Property="RenderTransform" Value="scaley(-1)" />
