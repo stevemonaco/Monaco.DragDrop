@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
@@ -38,7 +39,7 @@ public abstract class DropAdornerBase : Border, IDropAdorner
         AvaloniaProperty.RegisterDirect<DropAdornerBase, string?>(nameof(ErrorMessage), o => o.ErrorMessage);
 
     /// <summary>
-    /// Control which the adorner should be positioned above
+    /// Error message indicating that a validation has failed
     /// </summary>
     public string? ErrorMessage
     {
@@ -46,9 +47,13 @@ public abstract class DropAdornerBase : Border, IDropAdorner
         set { SetAndRaise(ErrorMessageProperty, ref _errorMessage, value); }
     }
 
+    static DropAdornerBase()
+    {
+        IsHitTestVisibleProperty.OverrideDefaultValue<DropAdornerBase>(false);
+    }
+
     public DropAdornerBase()
     {
-        IsHitTestVisible = false;
         AvaDragDrop.SetAllowDrop(this, false);
         UpdatePseudoclasses(IsDropValid);
     }

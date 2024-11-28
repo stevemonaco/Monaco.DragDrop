@@ -13,7 +13,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
     protected bool _handledEventsToo = false;
 
-    public void Attach(Control control)
+    public virtual void Attach(Control control)
     {
         ThrowIf.NotNull(AttachedControl);
 
@@ -25,7 +25,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
         DropAdorner.TargetControl = AttachedControl;
     }
 
-    public void Detach(Control control)
+    public virtual void Detach(Control control)
     {
         if (AttachedControl is null)
             return;
@@ -54,7 +54,20 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     protected virtual void DragEnter(object? sender, DragEventArgs e)
     {
         bool canDrop = CanDrop(e);
+        e.DragEffects = OnDragEnter(canDrop);
+    }
 
+    protected virtual void DragLeave(object? sender, RoutedEventArgs e)
+    {
+        OnDragLeave();
+    }
+
+    /// <summary>
+    /// Invoked when a drag enters the AttachedControl
+    /// </summary>
+    /// <param name="canDrop"></param>
+    protected virtual DragDropEffects OnDragEnter(bool canDrop)
+    {
         if (DropAdorner is not null)
         {
             DropAdorner.Attach();
@@ -63,14 +76,19 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
         if (!canDrop)
         {
-            e.DragEffects = DragDropEffects.None;
-            return;
+            //e.DragEffects = DragDropEffects.None;
+            return DragDropEffects.None;
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", true);
+        return DragDropEffects.Move;
     }
 
-    protected virtual void DragLeave(object? sender, RoutedEventArgs e)
+    /// <summary>
+    /// Invoked when a drag leaves the AttachedControl
+    /// </summary>
+    /// <param name="canDrop"></param>
+    protected virtual void OnDragLeave()
     {
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
         DropAdorner?.Detach();

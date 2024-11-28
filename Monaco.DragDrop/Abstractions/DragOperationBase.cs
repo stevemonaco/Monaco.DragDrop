@@ -94,7 +94,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         if (payload is null || _dragOrigin is null)
             return;
 
-        var metadata = CreateMetadata();
+        var metadata = CreateMetadata(e);
 
         _trackedControl = null;
         _dragOrigin = null;
@@ -115,12 +115,17 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
     }
 
-    protected virtual DragMetadata CreateMetadata()
+    protected virtual DragMetadata CreateMetadata(PointerEventArgs e)
     {
         return new DragMetadata()
         {
+            DragOperation = this,
             DragOrigin = _dragOrigin!.Value,
             DragIds = InteractionIds.ToList()
         };
+    }
+
+    public virtual void DropCompleted()
+    {
     }
 }
