@@ -11,6 +11,6 @@ public class SimpleCollectionPageViewModel : PageViewModel
     public SimpleCollectionPageViewModel()
     {
         Title = "Simple Collection";
-        LeftGuids = new(Enumerable.Range(0, 100).Select(x => Guid.NewGuid()));
+        LeftGuids = new(Enumerable.Range(0, 20).Select(x => Guid.NewGuid()));
     }
 }

@@ -18,16 +18,15 @@ public class DropInsertionAdorner : DropAdornerBase
     static DropInsertionAdorner()
     {
         OpacityProperty.OverrideDefaultValue<DropInsertionAdorner>(0.7d);
-        BackgroundProperty.OverrideDefaultValue<DropInsertionAdorner>(Brushes.Green);
-        BorderBrushProperty.OverrideDefaultValue<DropInsertionAdorner>(Brushes.Purple);
+        BorderBrushProperty.OverrideDefaultValue<DropInsertionAdorner>(Brushes.Transparent);
         BorderThicknessProperty.OverrideDefaultValue<DropInsertionAdorner>(new Thickness(2));
+        IsHitTestVisibleProperty.OverrideDefaultValue<DropInsertionAdorner>(false);
+        ClipToBoundsProperty.OverrideDefaultValue<DropInsertionAdorner>(false);
     }
 
     public DropInsertionAdorner()
     {
-        IsHitTestVisible = false;
         AdornerLayer.SetIsClipEnabled(this, false);
-        ClipToBounds = false;
     }
 
     public override void Attach()
@@ -90,8 +89,7 @@ public class DropInsertionAdorner : DropAdornerBase
         Debug.WriteLine("Detach");
         base.Detach();
         TargetControl.RemoveHandler(AvaDragDrop.DragOverEvent, TargetControl_DragOver);
-
-        TargetControl.RenderTransform = null;
+        TargetControl.RemoveHandler(AvaDragDrop.DragEnterEvent, TargetControl_DragEnter);
     }
 
     protected virtual void TargetControl_DragEnter(object? sender, DragEventArgs e)
@@ -134,6 +132,10 @@ public class DropInsertionAdorner : DropAdornerBase
         else if (VerticalAlignment == VerticalAlignment.Bottom)
             Margin = new Thickness(0, -2, 0, -2);
 
+        var parent = TargetControl.Parent;
+        
+
+
         UpdatePseudoclasses(VerticalAlignment == VerticalAlignment.Top);
     }
 
@@ -146,6 +148,13 @@ public class DropInsertionAdorner : DropAdornerBase
             && Child is TextBlock errorText)
         {
             errorText.Text = errorMessage;
+        }
+        else if (change.Property == IsDropValidProperty)
+        {
+            if (change.NewValue is true)
+                Background = Brushes.Orange;
+            else
+                Background = Brushes.Transparent;
         }
     }
 

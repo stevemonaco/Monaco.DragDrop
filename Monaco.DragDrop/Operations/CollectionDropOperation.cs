@@ -7,6 +7,7 @@ using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Monaco.DragDrop.Abstractions;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace Monaco.DragDrop;
@@ -39,11 +40,6 @@ public class CollectionDropOperation : DropOperationBase
     {
         var target = LocateTargetContainer(e);
 
-        if (target is not null)
-            Debug.WriteLine($"Enter: {target.ToString()} {target?.Name ?? "None"}");
-        else
-            Debug.WriteLine($"Enter: {sender!.ToString()}");
-
         bool canDrop = CanDrop(e);
 
         if (DropAdorner is not null)
@@ -56,6 +52,7 @@ public class CollectionDropOperation : DropOperationBase
         {
             OnDragEnter(canDrop);
         }
+
         if (ItemDropAdorner is not null && target is not null)
         {
             _targetItem = target;
@@ -80,18 +77,14 @@ public class CollectionDropOperation : DropOperationBase
 
         var target = LocateTargetContainer(e);
 
-        if (target is not null)
-            Debug.WriteLine($"Leave: {target.ToString()} {target?.Name ?? "None"}");
-        else
-            Debug.WriteLine($"Leave: {sender!.ToString()}");
-
-        if (target == ItemDropAdorner?.TargetControl)
-        {
-            OnItemDragLeave();
-        }
-        else if (sender == AttachedControl)
+        if (target is null || sender == AttachedControl)
         {
             base.DragLeave(sender, e);
+        }
+
+        if (target is not null && target == ItemDropAdorner?.TargetControl)
+        {
+            OnItemDragLeave();
         }
     }
 
@@ -124,26 +117,19 @@ public class CollectionDropOperation : DropOperationBase
 
     protected override void Drop(object? sender, DragEventArgs e)
     {
-        var metadata = GetMetadata(e);
-        var payload = GetPayload(e, metadata);
+        if (!TryGetMetadata<DragMetadata>(e, out var metadata) || !TryGetPayload<object>(e, out var payload))
+            return;
 
-        if (payload is not null && metadata is not null && PayloadTarget is IList targetCollection)
+        if (PayloadTarget is IList targetCollection && metadata.PayloadCollection is { } payloadCollection)
         {
-            if (_targetIndex is int index)
+            if (_targetIndex.HasValue)
             {
-                int indexDelta = 0;
-                if (ItemDropAdorner.TargetControl.Classes.Contains(":dropbottom"))
-                    indexDelta++;
-
-                targetCollection.Insert(index + indexDelta, payload);
+                TransferPayloadIndexed(payload, targetCollection, _targetIndex.Value, payloadCollection, metadata.PayloadContainerIndex);
             }
             else
             {
-                targetCollection.Add(payload);
+                TransferPayload(payload, targetCollection, payloadCollection, metadata.PayloadContainerIndex);
             }
-
-            if (metadata.PayloadCollection is IList payloadCollection)
-                payloadCollection.Remove(payload);
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
@@ -151,9 +137,39 @@ public class CollectionDropOperation : DropOperationBase
         DropAdorner?.Detach();
     }
 
+    protected virtual void TransferPayload(object payload, IList targetCollection, IList payloadCollection, int? payloadIndex)
+    {
+        targetCollection.Add(payload);
+
+        if (payloadIndex.HasValue)
+            payloadCollection.RemoveAt(payloadIndex.Value);
+        else
+            payloadCollection.Remove(payload);
+    }
+
+    protected virtual void TransferPayloadIndexed(object payload, IList targetCollection, int targetIndex, IList payloadCollection, int? payloadIndex)
+    {
+        int indexDelta = 0;
+        if (ItemDropAdorner?.TargetControl?.Classes.Contains(":dropbottom") ?? false)
+            indexDelta++;
+
+        if (payloadIndex.HasValue)
+            payloadCollection.RemoveAt(payloadIndex.Value);
+        else
+            payloadCollection.Remove(payload);
+
+        // Same collection, item being moved lower
+        if (ReferenceEquals(targetCollection, payloadCollection) && payloadIndex < (targetIndex + indexDelta))
+        {
+            indexDelta--;
+        }
+
+        targetCollection.Insert(targetIndex + indexDelta, payload);
+    }
+
     protected override bool CanDrop(DragEventArgs e)
     {
-        var metadata = GetMetadata(e);
+        //var metadata = GetMetadata(e);
         var hasPayload = CanGetPayload(e);
 
         if (e.Source is Control sourceItem && !AttachedControl.IsLogicalAncestorOf(sourceItem))
@@ -223,12 +239,13 @@ public class CollectionDropOperation : DropOperationBase
     /// <param name="canDrop"></param>
     protected virtual void OnItemDragLeave()
     {
+        _targetIndex = null;
+
         if (ItemDropAdorner?.TargetControl is not null)
         {
             ((IPseudoClasses)ItemDropAdorner.TargetControl.Classes).Set(":dropover", false);
+            ItemDropAdorner.Detach();
         }
-
-        //ItemDropAdorner?.Detach();
     }
 
     protected virtual Control? LocateTargetContainer(RoutedEventArgs triggerEvent)
@@ -255,10 +272,8 @@ public class CollectionDropOperation : DropOperationBase
         {
             return items.IndexFromContainer(container);
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     protected virtual DropMetadata CreateDropMetadata(Control hoveredControl, DragEventArgs e)

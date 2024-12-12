@@ -13,17 +13,17 @@ public class PersonDropOperation : CollectionDropOperation
 {
     protected override bool CanDrop(DragEventArgs e)
     {
-        if (!CanGetPayload(e) || GetMetadata(e) is not { } metadata)
+        if (!CanGetPayload(e) || !TryGetMetadata<DragMetadata>(e, out var metadata))
             return false;
 
         // Ensure various data are available
         if (metadata.PayloadCollection is not ObservableCollection<PersonViewModel> personSource // Not necessary for this validation
             || PayloadTarget is not ObservableCollection<PersonViewModel> personDest // Not necessary for this validation
-            || GetPayload(e, metadata) is not PersonViewModel person
+            || !TryGetPayload<PersonViewModel>(e, out var person)
             || AttachedControl is not { DataContext: ListBoxPageViewModel vm })
             return false;
 
-        // InteractionIds adds some extra necessary information since we didn't aggregate into a TeamViewModel
+        // InteractionIds adds some extra necessary information since we didn't create a specialized TeamViewModel type
         return InteractionIds switch
         {
             ["app:mining"] => Validate(person, person.MiningProficiency, vm.MiningTeam, vm.MiningBudgetRemaining),

@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using System.Diagnostics.CodeAnalysis;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
@@ -118,13 +119,13 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     /// <param name="e"></param>
     protected virtual void Drop(object? sender, DragEventArgs e)
     {
-        var metadata = GetMetadata(e);
-        var payload = GetPayload(e, metadata);
+        if (!TryGetMetadata<DragMetadata>(e, out var metadata))
+            return;
 
-        if (payload is not null)
-        {
-            PayloadTarget = payload;
-        }
+        if (!TryGetPayload<object>(e, out var payload))
+            return;
+
+        SetCurrentValue(PayloadTargetProperty, payload);
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
 
@@ -142,7 +143,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     /// <returns></returns>
     protected virtual bool CanDrop(DragEventArgs e)
     {
-        var metadata = GetMetadata(e);
+        //var metadata = GetMetadata(e);
         var hasPayload = CanGetPayload(e);
 
         return hasPayload;
@@ -159,19 +160,44 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     }
 
     /// <summary>
-    /// Gets the Payload to be assigned to the DropTarget
-    /// This allows a data transform from the Payload set by the Drag operation into
+    /// Tries to get the Payload to be assigned to the DropTarget
+    /// Overriding this allows a data transform from the Payload set by the Drag operation into
     /// what the DropTarget expects, if it's not 1:1 compatible
     /// </summary>
-    /// <param name="e"></param>
+    /// <typeparam name="TPayload">Compatible type of payload expected</typeparam>
+    /// <param name="e">Drag event that started the operation</param>
+    /// <param name="payload">Payload to be transferred by the operation</param>
     /// <returns></returns>
-    protected virtual object? GetPayload(DragEventArgs e, DragMetadata? metadata)
+    protected virtual bool TryGetPayload<TPayload>(DragEventArgs e, [MaybeNullWhen(false)] out TPayload payload)
+        where TPayload : class
     {
-        return InteractionIds.Select(e.Data.Get).OfType<object>().FirstOrDefault();
+        if (InteractionIds.Select(e.Data.Get).OfType<object>().FirstOrDefault() is TPayload p)
+        {
+            payload = p;
+            return true;
+        }
+
+        payload = null;
+        return false;
     }
 
-    protected DragMetadata? GetMetadata(DragEventArgs e)
+    /// <summary>
+    /// Tries to get metadata related to the initiation of the drag operation
+    /// </summary>
+    /// <typeparam name="TDragMetadata">Compatible type of drag metadata</typeparam>
+    /// <param name="e">Drag event that started the operation</param>
+    /// <param name="dragMetadata">Metadata from the drag initiation</param>
+    /// <returns></returns>
+    protected bool TryGetMetadata<TDragMetadata>(DragEventArgs e, [MaybeNullWhen(false)] out TDragMetadata dragMetadata)
+        where TDragMetadata : DragMetadata
     {
-        return e.Data.Get(DragDropIds.DragMetadata) as DragMetadata;
+        if (e.Data.Get(DragDropIds.DragMetadata) is TDragMetadata metadata)
+        {
+            dragMetadata = metadata;
+            return true;
+        }
+
+        dragMetadata = null;
+        return false;
     }
 }
