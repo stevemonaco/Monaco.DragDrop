@@ -32,7 +32,7 @@ public class CollectionDragOperation : DragOperation
         var container = LocatePayloadContainer(e);
         var index = LocatePayloadContainerIndex(container);
 
-        return new DragMetadata()
+        return new CollectionDragMetadata()
         {
             DragOperation = this,
             DragOrigin = _dragOrigin!.Value,

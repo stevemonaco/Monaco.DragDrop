@@ -13,7 +13,7 @@ public class PersonDropOperation : CollectionDropOperation
 {
     protected override bool CanDrop(DragEventArgs e)
     {
-        if (!CanGetPayload(e) || !TryGetMetadata<DragMetadata>(e, out var metadata))
+        if (!CanGetPayload(e) || !TryGetMetadata<CollectionDragMetadata>(e, out var metadata))
             return false;
 
         // Ensure various data are available

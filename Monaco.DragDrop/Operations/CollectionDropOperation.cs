@@ -117,7 +117,7 @@ public class CollectionDropOperation : DropOperationBase
 
     protected override void Drop(object? sender, DragEventArgs e)
     {
-        if (!TryGetMetadata<DragMetadata>(e, out var metadata) || !TryGetPayload<object>(e, out var payload))
+        if (!TryGetMetadata<CollectionDragMetadata>(e, out var metadata) || !TryGetPayload<object>(e, out var payload))
             return;
 
         if (PayloadTarget is IList targetCollection && metadata.PayloadCollection is { } payloadCollection)
