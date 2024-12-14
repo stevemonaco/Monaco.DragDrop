@@ -19,11 +19,6 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <TextBlock Text="{Binding Name}" />
-                    <!--<PathIcon
-                        Classes="vflip"
-                        Data="{x:Static res:AppIcons.Age}"
-                        ToolTip.Tip="Age" />
-                    <TextBlock Text="{Binding Age}" />-->
                     <PathIcon
                         Classes="vflip"
                         Data="{x:Static res:AppIcons.Gold}"

@@ -9,7 +9,6 @@ namespace Monaco.DragDrop.Abstractions;
 public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 {
     public IList<string> InteractionIds { get; set; } = [DragDropIds.DefaultOperation];
-    public Control? AttachedControl { get; private set; }
     public object? Context { get; set; }
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
     protected bool _handledEventsToo = false;

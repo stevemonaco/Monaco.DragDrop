@@ -11,6 +11,7 @@ public partial class MainWindowViewModel : ObservableObject
         new SingleItemPageViewModel(),
         new SimpleCollectionPageViewModel(),
         new ListBoxPageViewModel(),
+        new TreeViewPageViewModel()
     };
 
     [ObservableProperty] private PageViewModel _selectedPage;

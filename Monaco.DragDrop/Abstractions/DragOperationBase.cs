@@ -8,7 +8,6 @@ namespace Monaco.DragDrop.Abstractions;
 public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 {
     public IList<string> InteractionIds { get; set; } = [DragDropIds.DefaultOperation];
-    public Control? AttachedControl { get; private set; }
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
 
     protected Control? _trackedControl; // Control that has been clicked and may be initiating a drag
@@ -113,6 +112,8 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
 
         var effect = DragDropEffects.Move;
         await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
+
+        DragDropCompleted();
     }
 
     protected virtual DragMetadata CreateMetadata(PointerEventArgs e)
@@ -125,7 +126,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         };
     }
 
-    public virtual void DropCompleted()
+    protected virtual void DragDropCompleted()
     {
     }
 }

@@ -9,6 +9,4 @@ public interface IDragOperation
 
     void Attach(Control control);
     void Detach(Control control);
-
-    void DropCompleted();
 }

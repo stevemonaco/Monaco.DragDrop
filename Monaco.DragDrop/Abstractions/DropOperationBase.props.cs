@@ -1,11 +1,24 @@
 ﻿using Avalonia.Data;
 using Avalonia;
+using Avalonia.Controls;
 
 namespace Monaco.DragDrop.Abstractions;
 public abstract partial class DropOperationBase
 {
+    public static readonly StyledProperty<Control?> AttachedControlProperty =
+        AvaloniaProperty.Register<DropOperationBase, Control?>(nameof(AttachedControl));
+
+    /// <summary>
+    /// Control that the DropOperation is attached to
+    /// </summary>
+    public Control? AttachedControl
+    {
+        get => GetValue(AttachedControlProperty);
+        set => SetValue(AttachedControlProperty, value);
+    }
+
     public static readonly StyledProperty<object?> PayloadTargetProperty =
-    AvaloniaProperty.Register<DropOperationBase, object?>(nameof(PayloadTarget), defaultBindingMode: BindingMode.TwoWay);
+        AvaloniaProperty.Register<DropOperationBase, object?>(nameof(PayloadTarget), defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
     /// PayloadTarget will be assigned the Payload that was registered by the DragOperation when the Drop is applied

@@ -7,8 +7,6 @@ using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Monaco.DragDrop.Abstractions;
 using System.Collections;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace Monaco.DragDrop;
 public class CollectionDropOperation : DropOperationBase

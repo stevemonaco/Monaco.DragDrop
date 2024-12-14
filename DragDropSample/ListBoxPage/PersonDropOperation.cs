@@ -35,7 +35,7 @@ public class PersonDropOperation : CollectionDropOperation
 
     private bool Validate(PersonViewModel person, int? proficiency, ObservableCollection<PersonViewModel> team, int budgetRemaining)
     {
-        if (proficiency is null) // Worker is not proficient in this area
+        if (proficiency is null)
         {
             DropAdorner!.ErrorMessage = "Worker is not proficient in this area";
             return false;

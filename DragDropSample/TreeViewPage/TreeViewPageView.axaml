@@ -1,0 +1,65 @@
+<UserControl
+    x:Class="DragDropSample.Views.TreeViewPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:node="using:DragDropSample.ViewModels.Nodes"
+    xmlns:vm="using:DragDropSample.ViewModels"
+    x:Name="root"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:TreeViewPageViewModel"
+    mc:Ignorable="d">
+    <Grid ColumnDefinitions="*, auto, *">
+        <TreeView x:Name="tree" ItemsSource="{Binding Solutions}">
+            <dd:DragDrop.DragOperation>
+                <dd:TreeDragOperation
+                    InteractionIds="app:node"
+                    Payload="{Binding #tree.SelectedItem}"
+                    PayloadCollection="{ReflectionBinding $self.AttachedControl.Parent.DataContext.Children}" />
+            </dd:DragDrop.DragOperation>
+            <dd:DragDrop.DropOperation>
+                <dd:TreeDropOperation InteractionIds="app:node" PayloadTarget="{ReflectionBinding $self.AttachedControl.DataContext.Children}" />
+            </dd:DragDrop.DropOperation>
+
+            <TreeView.DataTemplates>
+                <TreeDataTemplate x:DataType="node:SolutionNodeViewModel" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+                <TreeDataTemplate x:DataType="node:ProjectNodeViewModel" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+                <TreeDataTemplate x:DataType="node:FolderNodeViewModel" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+                <TreeDataTemplate x:DataType="node:FileNodeViewModel">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.DataTemplates>
+        </TreeView>
+        <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+        <ListBox
+            x:Name="box"
+            Grid.Column="2"
+            ItemsSource="{Binding FlatItems}">
+            <dd:DragDrop.DragOperation>
+                <dd:CollectionDragOperation
+                    InteractionIds="app:node"
+                    Payload="{Binding #box.SelectedItem}"
+                    PayloadCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+            </dd:DragDrop.DragOperation>
+            <dd:DragDrop.DropOperation>
+                <dd:CollectionDropOperation InteractionIds="app:node" PayloadTarget="{Binding #root.((vm:TreeViewPageViewModel)DataContext).FlatItems}" />
+            </dd:DragDrop.DropOperation>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="node:NodeViewModel">
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+
+</UserControl>
