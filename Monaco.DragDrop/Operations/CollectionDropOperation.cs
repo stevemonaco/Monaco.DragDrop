@@ -9,6 +9,10 @@ using Monaco.DragDrop.Abstractions;
 using System.Collections;
 
 namespace Monaco.DragDrop;
+
+/// <summary>
+/// Handles drop operations into flat collection controls
+/// </summary>
 public class CollectionDropOperation : DropOperationBase
 {
     public static readonly StyledProperty<DropAdornerBase?> ItemDropAdornerProperty =
@@ -115,19 +119,34 @@ public class CollectionDropOperation : DropOperationBase
 
     protected override void Drop(object? sender, DragEventArgs e)
     {
-        if (!TryGetMetadata<CollectionDragMetadata>(e, out var metadata) || !TryGetPayload<object>(e, out var payload))
+        if (!TryGetDragInfo<CollectionDragInfo>(e, out var dragInfo) || !TryGetPayload<object>(e, out var payload))
             return;
 
-        if (PayloadTarget is IList targetCollection && metadata.PayloadCollection is { } payloadCollection)
+
+        if (PayloadTarget is IList targetCollection && dragInfo.PayloadCollection is { } payloadCollection)
         {
+            int actualTargetIndex = -1;
+
             if (_targetIndex.HasValue)
             {
-                TransferPayloadIndexed(payload, targetCollection, _targetIndex.Value, payloadCollection, metadata.PayloadContainerIndex);
+                actualTargetIndex = TransferPayloadIndexed(payload, targetCollection, _targetIndex.Value, payloadCollection, dragInfo.PayloadContainerIndex);
             }
             else
             {
-                TransferPayload(payload, targetCollection, payloadCollection, metadata.PayloadContainerIndex);
+                actualTargetIndex = TransferPayload(payload, targetCollection, payloadCollection, dragInfo.PayloadContainerIndex);
             }
+
+            var dropInfo = new CollectionDropInfo()
+            {
+                DragEventArgs = e,
+                HoveredControl = (Control)sender,
+                TargetCollection = targetCollection,
+                TargetIndex = actualTargetIndex,
+                TargetContainer = (Control)sender,
+                HoverLocation = e.GetPosition((Visual)sender)
+            };
+
+            dragInfo.DragOperation.DropCompleted(e.DragEffects, dragInfo, dropInfo);
         }
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
@@ -135,34 +154,37 @@ public class CollectionDropOperation : DropOperationBase
         DropAdorner?.Detach();
     }
 
-    protected virtual void TransferPayload(object payload, IList targetCollection, IList payloadCollection, int? payloadIndex)
+    /// <summary>
+    /// Transfers the payload into the target collection
+    /// </summary>
+    /// <param name="payload"></param>
+    /// <param name="targetCollection"></param>
+    /// <param name="payloadCollection"></param>
+    /// <param name="payloadIndex"></param>
+    /// <returns>Actual index where payload was stored</returns>
+    protected virtual int TransferPayload(object payload, IList targetCollection, IList payloadCollection, int? payloadIndex)
     {
         targetCollection.Add(payload);
-
-        if (payloadIndex.HasValue)
-            payloadCollection.RemoveAt(payloadIndex.Value);
-        else
-            payloadCollection.Remove(payload);
+        return targetCollection.Count - 1;
     }
 
-    protected virtual void TransferPayloadIndexed(object payload, IList targetCollection, int targetIndex, IList payloadCollection, int? payloadIndex)
+    /// <summary>
+    /// Transfers a payload to a specific index in the target collection
+    /// </summary>
+    /// <param name="payload"></param>
+    /// <param name="targetCollection"></param>
+    /// <param name="targetIndex"></param>
+    /// <param name="payloadCollection"></param>
+    /// <param name="payloadIndex"></param>
+    /// <returns>Actual index where payload was stored</returns>
+    protected virtual int TransferPayloadIndexed(object payload, IList targetCollection, int targetIndex, IList payloadCollection, int? payloadIndex)
     {
         int indexDelta = 0;
         if (ItemDropAdorner?.TargetControl?.Classes.Contains(":dropbottom") ?? false)
             indexDelta++;
 
-        if (payloadIndex.HasValue)
-            payloadCollection.RemoveAt(payloadIndex.Value);
-        else
-            payloadCollection.Remove(payload);
-
-        // Same collection, item being moved lower
-        if (ReferenceEquals(targetCollection, payloadCollection) && payloadIndex < (targetIndex + indexDelta))
-        {
-            indexDelta--;
-        }
-
         targetCollection.Insert(targetIndex + indexDelta, payload);
+        return targetIndex + indexDelta;
     }
 
     protected override bool CanDrop(DragEventArgs e)
@@ -274,11 +296,11 @@ public class CollectionDropOperation : DropOperationBase
         return null;
     }
 
-    protected virtual DropMetadata CreateDropMetadata(Control hoveredControl, DragEventArgs e)
+    protected virtual DropInfo CreateDropMetadata(Control hoveredControl, DragEventArgs e)
     {
         var pos = e.GetPosition(hoveredControl);
 
-        return new DropMetadata()
+        return new DropInfo()
         {
             HoveredControl = hoveredControl,
             HoverLocation = pos,

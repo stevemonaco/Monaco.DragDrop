@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 
 namespace Monaco.DragDrop.Abstractions;
 public interface IDragOperation
@@ -9,4 +10,6 @@ public interface IDragOperation
 
     void Attach(Control control);
     void Detach(Control control);
+
+    void DropCompleted(DragDropEffects effect, DragInfo dragInfo, DropInfo dropInfo);
 }

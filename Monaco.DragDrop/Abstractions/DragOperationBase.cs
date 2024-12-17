@@ -102,7 +102,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         await DoDragDrop(e, metadata, payload);
     }
 
-    protected virtual async Task DoDragDrop(PointerEventArgs triggerEvent, DragMetadata metadata, object payload)
+    protected virtual async Task DoDragDrop(PointerEventArgs triggerEvent, DragInfo metadata, object payload)
     {
         var data = new DataObject();
         foreach (var id in InteractionIds)
@@ -111,14 +111,15 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         data.Set(DragDropIds.DragMetadata, metadata);
 
         var effect = DragDropEffects.Move;
-        await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
+        var result = await AvaDragDrop.DoDragDrop(triggerEvent, data, effect);
 
-        DragDropCompleted();
+        //if (result != DragDropEffects.None)
+        //    DropCompleted(result);
     }
 
-    protected virtual DragMetadata CreateMetadata(PointerEventArgs e)
+    protected virtual DragInfo CreateMetadata(PointerEventArgs e)
     {
-        return new DragMetadata()
+        return new DragInfo()
         {
             DragOperation = this,
             DragOrigin = _dragOrigin!.Value,
@@ -126,7 +127,14 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         };
     }
 
-    protected virtual void DragDropCompleted()
+    /// <summary>
+    /// Occurs when the Payload has been transferred
+    /// Responsible for removing Payload from attached control, if necessary
+    /// </summary>
+    /// <param name="effect">Effect when the drop occurred</param>
+    /// <param name="dragInfo">DragInfo associated with the dragdrop operation</param>
+    /// <param name="dropInfo">DropInfo associated with the dragdrop operation</param>
+    public virtual void DropCompleted(DragDropEffects effect, DragInfo dragInfo, DropInfo dropInfo)
     {
     }
 }

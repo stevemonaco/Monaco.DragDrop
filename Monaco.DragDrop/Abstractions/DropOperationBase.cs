@@ -21,7 +21,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
         AvaDragDrop.SetAllowDrop(control, true);
         SubscribeDropEvents(control);
 
-        DropAdorner = DropAdorner ?? new DropHighlightAdorner();
+        DropAdorner ??= new DropHighlightAdorner();
         DropAdorner.TargetControl = AttachedControl;
     }
 
@@ -118,13 +118,21 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     /// <param name="e"></param>
     protected virtual void Drop(object? sender, DragEventArgs e)
     {
-        if (!TryGetMetadata<DragMetadata>(e, out var metadata))
+        if (!TryGetDragInfo<DragInfo>(e, out var dragInfo))
             return;
 
         if (!TryGetPayload<object>(e, out var payload))
             return;
 
         SetCurrentValue(PayloadTargetProperty, payload);
+
+        var dropMetadata = new DropInfo()
+        {
+            DragEventArgs = e,
+            HoveredControl = (Control)sender
+        };
+
+        dragInfo.DragOperation.DropCompleted(e.DragEffects, dragInfo, dropMetadata);
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
 
@@ -187,8 +195,8 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     /// <param name="e">Drag event that started the operation</param>
     /// <param name="dragMetadata">Metadata from the drag initiation</param>
     /// <returns></returns>
-    protected bool TryGetMetadata<TDragMetadata>(DragEventArgs e, [MaybeNullWhen(false)] out TDragMetadata dragMetadata)
-        where TDragMetadata : DragMetadata
+    protected bool TryGetDragInfo<TDragMetadata>(DragEventArgs e, [MaybeNullWhen(false)] out TDragMetadata dragMetadata)
+        where TDragMetadata : DragInfo
     {
         if (e.Data.Get(DragDropIds.DragMetadata) is TDragMetadata metadata)
         {

@@ -8,7 +8,7 @@ namespace Monaco.DragDrop;
 /// <summary>
 /// Contains metadata about the app state at the time of drag initiation
 /// </summary>
-public class DragMetadata
+public class DragInfo
 {
     /// <summary>
     /// Drag Operation that created this metadata

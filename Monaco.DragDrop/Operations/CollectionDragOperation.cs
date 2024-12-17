@@ -7,6 +7,10 @@ using Monaco.DragDrop.Abstractions;
 using System.Collections;
 
 namespace Monaco.DragDrop;
+
+/// <summary>
+/// Handles drag operations from flat collection controls
+/// </summary>
 public class CollectionDragOperation : DragOperation
 {
     public static readonly StyledProperty<IList?> PayloadCollectionProperty =
@@ -27,12 +31,12 @@ public class CollectionDragOperation : DragOperation
         _handledEventsToo = true;
     }
 
-    protected override DragMetadata CreateMetadata(PointerEventArgs e)
+    protected override DragInfo CreateMetadata(PointerEventArgs e)
     {
         var container = LocatePayloadContainer(e);
         var index = LocatePayloadContainerIndex(container);
 
-        return new CollectionDragMetadata()
+        return new CollectionDragInfo()
         {
             DragOperation = this,
             DragOrigin = _dragOrigin!.Value,
@@ -65,6 +69,37 @@ public class CollectionDragOperation : DragOperation
         else
         {
             return null;
+        }
+    }
+
+    public override void DropCompleted(DragDropEffects effect, DragInfo dragInfo, DropInfo dropInfo)
+    {
+        base.DropCompleted(effect, dragInfo, dropInfo);
+
+        if (dragInfo is not CollectionDragInfo { PayloadCollection: IList payloadCollection } collectionDragInfo
+            || dropInfo is not CollectionDropInfo { TargetCollection: IList targetCollection } collectionDropInfo)
+            return;
+
+        var payloadIndex = collectionDragInfo.PayloadContainerIndex;
+        var targetIndex = collectionDropInfo.TargetIndex;
+
+        if (effect == DragDropEffects.Move)
+        {
+            if (payloadIndex.HasValue)
+            {
+                if (payloadIndex.Value >= targetIndex && ReferenceEquals(payloadCollection, targetCollection))
+                {
+                    payloadCollection.RemoveAt(payloadIndex.Value + 1);
+                }
+                else
+                {
+                    payloadCollection.RemoveAt(payloadIndex.Value);
+                }
+            }
+            else
+            {
+                payloadCollection.Remove(Payload);
+            }
         }
     }
 }

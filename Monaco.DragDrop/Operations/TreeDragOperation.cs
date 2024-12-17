@@ -7,7 +7,7 @@ using System.Collections;
 namespace Monaco.DragDrop;
 public class TreeDragOperation : CollectionDragOperation
 {
-    protected override DragMetadata CreateMetadata(PointerEventArgs e)
+    protected override DragInfo CreateMetadata(PointerEventArgs e)
     {
         var container = LocatePayloadContainer(e);
         var index = LocatePayloadContainerIndex(container);
@@ -21,7 +21,7 @@ public class TreeDragOperation : CollectionDragOperation
                 payloadCollection = treeList;
         }
 
-        return new CollectionDragMetadata()
+        return new CollectionDragInfo()
         {
             DragOperation = this,
             DragOrigin = _dragOrigin!.Value,

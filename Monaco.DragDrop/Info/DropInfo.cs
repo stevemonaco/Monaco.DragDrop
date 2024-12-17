@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 
 namespace Monaco.DragDrop;
-public class DropMetadata
+public class DropInfo
 {
     /// <summary>
     /// Pointer location relative to HoveredControl

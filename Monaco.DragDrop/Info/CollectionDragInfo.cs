@@ -2,7 +2,11 @@
 using System.Collections;
 
 namespace Monaco.DragDrop;
-public class CollectionDragMetadata : DragMetadata
+
+/// <summary>
+/// Contains additional drag metadata for collection controls
+/// </summary>
+public class CollectionDragInfo : DragInfo
 {
     /// <summary>
     /// Collection source containing the to-be-dropped Payload where items will be removed from
@@ -17,7 +21,7 @@ public class CollectionDragMetadata : DragMetadata
     public Control? PayloadContainer { get; init; }
 
     /// <summary>
-    /// Index of the container in the collection control
+    /// Index of the PayloadCollection where the payload was dropped
     /// Should match the index in the PayloadCollection
     /// </summary>
     public int? PayloadContainerIndex { get; init; }
