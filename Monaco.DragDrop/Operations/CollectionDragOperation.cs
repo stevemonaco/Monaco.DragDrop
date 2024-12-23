@@ -11,7 +11,7 @@ namespace Monaco.DragDrop;
 /// <summary>
 /// Handles drag operations from flat collection controls
 /// </summary>
-public class CollectionDragOperation : DragOperation
+public class CollectionDragOperation : ItemDragOperation
 {
     public static readonly StyledProperty<IList?> PayloadCollectionProperty =
     AvaloniaProperty.Register<DragOperationBase, IList?>(nameof(PayloadCollection));
