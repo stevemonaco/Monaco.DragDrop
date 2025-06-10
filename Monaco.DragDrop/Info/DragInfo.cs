@@ -1,7 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Monaco.DragDrop.Abstractions;
-using System.Collections;
 
 namespace Monaco.DragDrop;
 

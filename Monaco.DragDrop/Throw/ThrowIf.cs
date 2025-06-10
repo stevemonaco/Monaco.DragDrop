@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 namespace Monaco.DragDrop;
-public static class ThrowIf
+internal static class ThrowIf
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void False(bool condition, [CallerArgumentExpression(nameof(condition))] string conditionExpression = "")
