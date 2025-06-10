@@ -1,7 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
@@ -49,6 +51,9 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
     protected virtual void Control_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Control c || _isDragPending)
+            return;
+
+        if (e.Source is Control sourceControl && sourceControl.GetVisualAncestors().Any(x => x is ScrollBar))
             return;
 
         var point = e.GetCurrentPoint(c);

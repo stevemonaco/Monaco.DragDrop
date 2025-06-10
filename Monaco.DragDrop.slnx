@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DragDropSample/DragDropSample.csproj" />
+  <Project Path="Monaco.DragDrop/Monaco.DragDrop.csproj" />
+</Solution>

@@ -79,7 +79,6 @@
             </StackPanel>
             <ListBox Grid.Row="1" ItemsSource="{Binding MiningTeam}">
                 <dd:DragDrop.DropOperation>
-                    <!--<dd:CollectionDropOperation InteractionIds="mining" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}" SourceCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />-->
                     <cdd:PersonDropOperation InteractionIds="app:mining" PayloadTarget="{Binding #root.((vm:ListBoxPageViewModel)DataContext).MiningTeam}" />
                 </dd:DragDrop.DropOperation>
             </ListBox>
