@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 
 namespace DragDropSample.ViewModels;
-public partial class PersonViewModel : ObservableObject
+public partial class WorkerViewModel : ObservableObject
 {
     public int PersonId { get; init; }
     public required string Name { get; init; }
@@ -11,5 +11,5 @@ public partial class PersonViewModel : ObservableObject
     public int? MiningProficiency { get; init; }
     public int? CraftingProficiency { get; init; }
     public int? CombatProficiency { get; init; }
-    public ObservableCollection<PersonViewModel> DislikedPeople { get; set; } = [];
+    public ObservableCollection<WorkerViewModel> DislikedWorkers { get; set; } = [];
 }

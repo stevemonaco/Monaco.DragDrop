@@ -7,9 +7,9 @@ using System.Linq;
 namespace DragDropSample.CustomDragDrop;
 
 /// <summary>
-/// Adds specialized validation to check if the person is a fit for the team
+/// Adds specialized validation to check if the worker is a fit for the team
 /// </summary>
-public class PersonDropOperation : CollectionDropOperation
+public class WorkerDropOperation : CollectionDropOperation
 {
     protected override bool CanDrop(DragEventArgs e)
     {
@@ -17,23 +17,23 @@ public class PersonDropOperation : CollectionDropOperation
             return false;
 
         // Ensure various data are available
-        if (metadata.PayloadCollection is not ObservableCollection<PersonViewModel> personSource // Not necessary for this validation
-            || PayloadTarget is not ObservableCollection<PersonViewModel> personDest // Not necessary for this validation
-            || !TryGetPayload<PersonViewModel>(e, out var person)
+        if (metadata.PayloadCollection is not ObservableCollection<WorkerViewModel> workerSource // Not necessary for this validation
+            || PayloadTarget is not ObservableCollection<WorkerViewModel> workerDest // Not necessary for this validation
+            || !TryGetPayload<WorkerViewModel>(e, out var worker)
             || AttachedControl is not { DataContext: ListBoxPageViewModel vm })
             return false;
 
         // InteractionIds adds some extra necessary information since we didn't create a specialized TeamViewModel type
         return InteractionIds switch
         {
-            ["app:mining"] => Validate(person, person.MiningProficiency, vm.MiningTeam, vm.MiningBudgetRemaining),
-            ["app:crafting"] => Validate(person, person.CraftingProficiency, vm.CraftingTeam, vm.CraftingBudgetRemaining),
-            ["app:combat"] => Validate(person, person.CombatProficiency, vm.CombatTeam, vm.CombatBudgetRemaining),
+            ["app:mining"] => Validate(worker, worker.MiningProficiency, vm.MiningTeam, vm.MiningBudgetRemaining),
+            ["app:crafting"] => Validate(worker, worker.CraftingProficiency, vm.CraftingTeam, vm.CraftingBudgetRemaining),
+            ["app:combat"] => Validate(worker, worker.CombatProficiency, vm.CombatTeam, vm.CombatBudgetRemaining),
             _ => false
         };
     }
 
-    private bool Validate(PersonViewModel person, int? proficiency, ObservableCollection<PersonViewModel> team, int budgetRemaining)
+    private bool Validate(WorkerViewModel person, int? proficiency, ObservableCollection<WorkerViewModel> team, int budgetRemaining)
     {
         if (proficiency is null)
         {
@@ -47,13 +47,13 @@ public class PersonDropOperation : CollectionDropOperation
             return false;
         }
 
-        if (person.DislikedPeople.Any(team.Contains))
+        if (person.DislikedWorkers.Any(team.Contains))
         {
             DropAdorner!.ErrorMessage = $"{person.Name} doesn't like someone in the team";
             return false;
         }
 
-        if (team.SelectMany(x => x.DislikedPeople).Contains(person))
+        if (team.SelectMany(x => x.DislikedWorkers).Contains(person))
         {
             DropAdorner!.ErrorMessage = $"Someone in the team doesn't like {person.Name}";
             return false;

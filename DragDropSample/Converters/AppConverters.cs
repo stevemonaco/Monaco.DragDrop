@@ -3,5 +3,5 @@
 namespace DragDropSample.Converters;
 public static class AppConverters
 {
-    public static IValueConverter DislikedPeople { get; } = new DislikedPeopleConverter();
+    public static IValueConverter DislikedWorkers { get; } = new DislikedWorkersConverter();
 }
