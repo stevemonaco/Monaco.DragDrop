@@ -4,14 +4,25 @@ using Avalonia.Media;
 using Avalonia.Layout;
 
 namespace Monaco.DragDrop;
-public class DropHighlightAdorner(AdornerType dropAdornerType) : DropAdornerBase
+public class DropHighlightAdorner : DropAdornerBase
 {
+    private readonly AdornerType _dropAdornerType;
+
     static DropHighlightAdorner()
     {
         OpacityProperty.OverrideDefaultValue<DropHighlightAdorner>(0.7d);
         BackgroundProperty.OverrideDefaultValue<DropHighlightAdorner>(Brushes.Green);
         BorderBrushProperty.OverrideDefaultValue<DropHighlightAdorner>(Brushes.Purple);
         BorderThicknessProperty.OverrideDefaultValue<DropHighlightAdorner>(new Thickness(2));
+    }
+
+    public DropHighlightAdorner() : this(AdornerType.Solid)
+    {
+    }
+    
+    public DropHighlightAdorner(AdornerType dropAdornerType)
+    {
+        _dropAdornerType = dropAdornerType;
     }
 
     public override void Attach()
@@ -27,19 +38,20 @@ public class DropHighlightAdorner(AdornerType dropAdornerType) : DropAdornerBase
         Height = rect.Height;
         RenderTransform = new TranslateTransform(rect.X, rect.Y);
         
-        switch (dropAdornerType)
+        switch (_dropAdornerType)
         {
             case AdornerType.Solid:
-                this.Background = Brushes.Green;
-                this.BorderBrush = Brushes.DarkGreen;
+                Background = Brushes.Green;
+                BorderBrush = Brushes.DarkGreen;
                 break;
             case AdornerType.Border:
-                this.Background = Brushes.Transparent;
-                this.BorderBrush = Brushes.Green;
+                Background = Brushes.Transparent;
+                BorderBrush = Brushes.Green;
                 break;
+            case AdornerType.None:
             default:
-                this.Background = Brushes.Transparent;
-                this.BorderBrush = Brushes.Transparent;
+                Background = Brushes.Transparent;
+                BorderBrush = Brushes.Transparent;
                 break;
         }
 

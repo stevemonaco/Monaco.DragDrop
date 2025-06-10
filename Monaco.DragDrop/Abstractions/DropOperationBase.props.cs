@@ -30,16 +30,18 @@ public abstract partial class DropOperationBase
         set => SetValue(PayloadTargetProperty, value);
     }
 
-    public static readonly StyledProperty<ICommand?> PayloadCommandProperty = AvaloniaProperty.Register<DropOperationBase, ICommand?>(
-        "PayloadCommand");
+    private ICommand? _payloadCommand;
+
+    public static readonly DirectProperty<DropOperationBase, ICommand?> PayloadCommandProperty =
+        AvaloniaProperty.RegisterDirect<DropOperationBase, ICommand?>(nameof(PayloadCommand), o => o.PayloadCommand, (o, v) => o.PayloadCommand = v);
 
     /// <summary>
     /// PayloadCommand will be executed when the Drop is applied.
     /// </summary>
     public ICommand? PayloadCommand
     {
-        get => GetValue(PayloadCommandProperty);
-        set => SetValue(PayloadCommandProperty, value);
+        get => _payloadCommand;
+        set => SetAndRaise(PayloadCommandProperty, ref _payloadCommand, value);
     }
 
     public static readonly StyledProperty<DropAdornerBase?> DropAdornerProperty =

@@ -39,10 +39,8 @@ public class TreeDragOperation : CollectionDragOperation
             var ancestors = sourceItem.GetSelfAndLogicalAncestors();
             return ancestors.OfType<TreeViewItem>().FirstOrDefault();
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     protected override int? LocatePayloadContainerIndex(Control? container)
@@ -51,12 +49,10 @@ public class TreeDragOperation : CollectionDragOperation
         {
             if (item.Parent is TreeViewItem parent)
                 return parent.IndexFromContainer(container);
-            else
-                return items.IndexFromContainer(container);
+            
+            return items.IndexFromContainer(container);
         }
-        else
-        {
-            return null;
-        }
+        
+        return null;
     }
 }

@@ -15,8 +15,8 @@ namespace Monaco.DragDrop;
 /// </summary>
 public class DropInsertionAdorner : DropAdornerBase
 {
-    public static readonly StyledProperty<bool> SupportsChildInsertionProperty = AvaloniaProperty.Register<DropInsertionAdorner, bool>(
-        "SupportsChildInsertion");
+    public static readonly StyledProperty<bool> SupportsChildInsertionProperty =
+        AvaloniaProperty.Register<DropInsertionAdorner, bool>("SupportsChildInsertion");
 
     public bool SupportsChildInsertion
     {
@@ -54,9 +54,9 @@ public class DropInsertionAdorner : DropAdornerBase
         Width = rect.Width;
         Height = 4;
 
-        Debug.WriteLine($"Attach: {TargetControl.GetType().ToString()}");
+        Debug.WriteLine($"Attach: {TargetControl.GetType()}");
 
-        this.Target = DropTargetOffset.BeforeTarget;
+        Target = DropTargetOffset.BeforeTarget;
         //IsVisible = false;
 
         //TargetControl.RenderTransform = new TranslateTransform(0, 40);
@@ -134,31 +134,31 @@ public class DropInsertionAdorner : DropAdornerBase
         {
             if (dragLocation.Y < (Math.Floor(TargetControl.Bounds.Height / 4)))
             {
-                this.Target = DropTargetOffset.AfterTarget;
+                Target = DropTargetOffset.AfterTarget;
                 VerticalAlignment = VerticalAlignment.Top;
             }
             else if (dragLocation.Y > TargetControl.Bounds.Height - (Math.Floor(TargetControl.Bounds.Height / 4)))
             {
-                this.Target = DropTargetOffset.BeforeTarget;
+                Target = DropTargetOffset.BeforeTarget;
                 VerticalAlignment = VerticalAlignment.Bottom;
             }
             else
             {
-                this.Target = DropTargetOffset.OnTarget;
+                Target = DropTargetOffset.OnTarget;
                 VerticalAlignment = VerticalAlignment.Stretch;
             }
         }
         else
         {
-            if (dragLocation.Y < (Math.Floor(this.TargetControl.Bounds.Height / 2)))
+            if (dragLocation.Y < Math.Floor(TargetControl.Bounds.Height / 2))
             {
-                this.Target = DropTargetOffset.AfterTarget;
-                this.VerticalAlignment = VerticalAlignment.Top;
+                Target = DropTargetOffset.AfterTarget;
+                VerticalAlignment = VerticalAlignment.Top;
             }
             else
             {
-                this.Target = DropTargetOffset.BeforeTarget;
-                this.VerticalAlignment = VerticalAlignment.Bottom;
+                Target = DropTargetOffset.BeforeTarget;
+                VerticalAlignment = VerticalAlignment.Bottom;
             }
         }
 
@@ -168,7 +168,7 @@ public class DropInsertionAdorner : DropAdornerBase
         if (VerticalAlignment == VerticalAlignment.Stretch)
         {
             Margin = new Thickness(0);
-            Height = this.GetAdornerRect().Height;
+            Height = GetAdornerRect().Height;
         }
         else
         {
@@ -191,25 +191,14 @@ public class DropInsertionAdorner : DropAdornerBase
         }
         else if (change.Property == IsDropValidProperty)
         {
-            if (change.NewValue is true)
-                Background = Brushes.Orange;
-            else
-                Background = Brushes.Transparent;
+            Background = change.NewValue is true ? Brushes.Orange : Brushes.Transparent;
         }
     }
 
     private void UpdatePseudoclasses(bool isTop)
     {
-        if (isTop)
-        {
-            ((IPseudoClasses)TargetControl!.Classes).Set(":droptop", true);
-            ((IPseudoClasses)TargetControl!.Classes).Set(":dropbottom", false);
-        }
-        else
-        {
-            ((IPseudoClasses)TargetControl!.Classes).Set(":dropbottom", true);
-            ((IPseudoClasses)TargetControl!.Classes).Set(":droptop", false);
-        }
+        ((IPseudoClasses)TargetControl!.Classes).Set(":droptop", isTop);
+        ((IPseudoClasses)TargetControl!.Classes).Set(":dropbottom", !isTop);
     }
 
     private void RemovePseudoclasses()

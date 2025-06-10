@@ -16,7 +16,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     public RoutingStrategies Routing { get; set; } = RoutingStrategies.Bubble;
     protected bool _handledEventsToo = false;
 
-    protected DragDropEffects lastEffects;
+    protected DragDropEffects _lastEffects;
     
     protected AdornerType DropAdornerType { get; set; } = AdornerType.Solid;
     
@@ -62,7 +62,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
     {
         bool canDrop = CanDrop(e);
         e.DragEffects = OnDragEnter(e, canDrop);
-        this.lastEffects = e.DragEffects;
+        _lastEffects = e.DragEffects;
     }
     
     protected virtual void DragLeave(object? sender, DragEventArgs e)
@@ -72,7 +72,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected void InvokePayloadCommand(DragEventArgs e, DragInfo dragInfo, DropTargetOffset offset)
     {
-        if (this.PayloadCommand is null)
+        if (PayloadCommand is null)
         {
             return;
         }
@@ -97,12 +97,10 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
             targetContext = layoutable.DataContext;
         }
             
-        DropEventArgs args = new(
-            e.Source,
-            targetContext,
-            items,
-            offset);
-        this.PayloadCommand.Execute(args);
+        DropEventArgs args = new(e.Source, targetContext, items, offset);
+        
+        if (PayloadCommand.CanExecute(args))
+            PayloadCommand.Execute(args);
     }
 
     /// <summary>
@@ -130,7 +128,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected virtual DragDropEffects OnDragOver()
     {
-        return this.lastEffects;
+        return _lastEffects;
     }
 
     /// <summary>
@@ -159,7 +157,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
             return;
         }
 
-        e.DragEffects = this.OnDragOver();
+        e.DragEffects = OnDragOver();
     }
 
     /// <summary>
@@ -185,9 +183,9 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
         dragInfo.DragOperation.DropCompleted(e.DragEffects, dragInfo, dropMetadata);
         
-        this.InvokePayloadCommand(e, dragInfo, DropTargetOffset.OnTarget);
+        InvokePayloadCommand(e, dragInfo, DropTargetOffset.OnTarget);
 
-        this.OnDrop(e);
+        OnDrop(e);
 
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
 
