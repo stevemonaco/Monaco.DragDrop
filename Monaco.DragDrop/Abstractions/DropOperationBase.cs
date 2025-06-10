@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using System.Diagnostics.CodeAnalysis;
-using Avalonia.Layout;
 using Avalonia.Styling;
+using Monaco.DragDrop.Adorners;
 using AvaDragDrop = Avalonia.Input.DragDrop;
 
 namespace Monaco.DragDrop.Abstractions;
@@ -18,7 +18,7 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
 
     protected DragDropEffects _lastEffects;
     
-    protected AdornerType DropAdornerType { get; set; } = AdornerType.Solid;
+    protected DropAdornerKind DropAdornerType { get; set; } = DropAdornerKind.Solid;
     
     public virtual void Attach(Control control)
     {

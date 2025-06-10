@@ -2,11 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Layout;
+using Monaco.DragDrop.Adorners;
 
 namespace Monaco.DragDrop;
 public class DropHighlightAdorner : DropAdornerBase
 {
-    private readonly AdornerType _dropAdornerType;
+    private readonly DropAdornerKind _dropAdornerType;
 
     static DropHighlightAdorner()
     {
@@ -16,11 +17,11 @@ public class DropHighlightAdorner : DropAdornerBase
         BorderThicknessProperty.OverrideDefaultValue<DropHighlightAdorner>(new Thickness(2));
     }
 
-    public DropHighlightAdorner() : this(AdornerType.Solid)
+    public DropHighlightAdorner() : this(DropAdornerKind.Solid)
     {
     }
     
-    public DropHighlightAdorner(AdornerType dropAdornerType)
+    public DropHighlightAdorner(DropAdornerKind dropAdornerType)
     {
         _dropAdornerType = dropAdornerType;
     }
@@ -40,15 +41,15 @@ public class DropHighlightAdorner : DropAdornerBase
         
         switch (_dropAdornerType)
         {
-            case AdornerType.Solid:
+            case DropAdornerKind.Solid:
                 Background = Brushes.Green;
                 BorderBrush = Brushes.DarkGreen;
                 break;
-            case AdornerType.Border:
+            case DropAdornerKind.Border:
                 Background = Brushes.Transparent;
                 BorderBrush = Brushes.Green;
                 break;
-            case AdornerType.None:
+            case DropAdornerKind.None:
             default:
                 Background = Brushes.Transparent;
                 BorderBrush = Brushes.Transparent;
