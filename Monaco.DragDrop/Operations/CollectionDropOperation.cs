@@ -15,13 +15,13 @@ namespace Monaco.DragDrop;
 /// </summary>
 public class CollectionDropOperation : DropOperationBase
 {
-    public static readonly StyledProperty<DropAdornerBase?> ItemDropAdornerProperty =
-        AvaloniaProperty.Register<CollectionDropOperation, DropAdornerBase?>(nameof(DropAdorner), defaultBindingMode: BindingMode.OneTime);
+    public static readonly StyledProperty<DropInsertionAdorner?> ItemDropAdornerProperty =
+        AvaloniaProperty.Register<CollectionDropOperation, DropInsertionAdorner?>(nameof(DropAdorner), defaultBindingMode: BindingMode.OneTime);
 
     /// <summary>
     /// Adorner responsible for rendering overlay visual when dragging over and in a valid state
     /// </summary>
-    public DropAdornerBase? ItemDropAdorner
+    public DropInsertionAdorner? ItemDropAdorner
     {
         get => GetValue(ItemDropAdornerProperty);
         set => SetValue(ItemDropAdornerProperty, value);
@@ -38,6 +38,15 @@ public class CollectionDropOperation : DropOperationBase
         ItemDropAdorner = ItemDropAdorner ?? new DropInsertionAdorner();
     }
 
+    public static readonly StyledProperty<bool> IsTreeProperty = AvaloniaProperty.Register<CollectionDropOperation, bool>(
+        nameof(IsTree));
+
+    public bool IsTree
+    {
+        get => GetValue(IsTreeProperty);
+        set => SetValue(IsTreeProperty, value);
+    }
+
     protected override void DragEnter(object? sender, DragEventArgs e)
     {
         var target = LocateTargetContainer(e);
@@ -52,7 +61,8 @@ public class CollectionDropOperation : DropOperationBase
 
         if (sender == AttachedControl)
         {
-            OnDragEnter(canDrop);
+            e.DragEffects = OnDragEnter(e, canDrop);
+            this.lastEffects = e.DragEffects;
         }
 
         if (ItemDropAdorner is not null && target is not null)
@@ -69,10 +79,11 @@ public class CollectionDropOperation : DropOperationBase
             return;
         }
 
+        e.Handled = true;
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", true);
     }
 
-    protected override void DragLeave(object? sender, RoutedEventArgs e)
+    protected override void DragLeave(object? sender, DragEventArgs e)
     {
         if (sender is null)
             return;
@@ -115,13 +126,15 @@ public class CollectionDropOperation : DropOperationBase
             e.DragEffects = DragDropEffects.None;
             return;
         }
+        
+        e.DragEffects = this.OnDragOver();
+        e.Handled = true;
     }
 
     protected override void Drop(object? sender, DragEventArgs e)
     {
         if (!TryGetDragInfo<CollectionDragInfo>(e, out var dragInfo) || !TryGetPayload<object>(e, out var payload))
             return;
-
 
         if (PayloadTarget is IList targetCollection && dragInfo.PayloadCollection is { } payloadCollection)
         {
@@ -148,7 +161,10 @@ public class CollectionDropOperation : DropOperationBase
 
             dragInfo.DragOperation.DropCompleted(e.DragEffects, dragInfo, dropInfo);
         }
-
+        
+        this.InvokePayloadCommand(e, dragInfo, this.ItemDropAdorner?.Target ?? DropTargetOffset.AfterTarget);
+        
+        e.Handled = true;
         ((IPseudoClasses)AttachedControl!.Classes).Set(":dropover", false);
         ItemDropAdorner?.Detach();
         DropAdorner?.Detach();
@@ -231,12 +247,25 @@ public class CollectionDropOperation : DropOperationBase
     /// <param name="canDrop"></param>
     protected virtual DragDropEffects OnItemDragEnter(Control itemContainer, Point dragLocation, bool canDrop)
     {
+        if (this.IsTree)
+        {
+            if (this.DropAdorner is DropHighlightAdorner dropAdorner)
+            {
+                this.DropAdorner.Detach();
+                this.DropAdorner = null;
+            }
+        }
+        
         // TODO: Generalize
         if (ItemDropAdorner is DropInsertionAdorner insertionAdorner)
         {
             ItemDropAdorner.Detach();
             ItemDropAdorner.TargetControl = itemContainer;
-            ItemDropAdorner = new DropInsertionAdorner() { TargetControl = itemContainer };
+            ItemDropAdorner = new DropInsertionAdorner()
+            {
+                TargetControl = itemContainer,
+                SupportsChildInsertion = this.IsTree,
+            };
             ItemDropAdorner.Attach();
 
             (ItemDropAdorner as DropInsertionAdorner)?.Update(dragLocation);
@@ -270,17 +299,26 @@ public class CollectionDropOperation : DropOperationBase
 
     protected virtual Control? LocateTargetContainer(RoutedEventArgs triggerEvent)
     {
-        if (AttachedControl is ItemsControl items 
-            && triggerEvent.Source is Control sourceItem
-            && sourceItem.TemplatedParent != AttachedControl)
         {
-            var ancestors = sourceItem.GetSelfAndLogicalAncestors();
-            var target = ancestors.TakeWhile(x => x != AttachedControl).OfType<Control>().LastOrDefault();
+            if (AttachedControl is ItemsControl items
+                && triggerEvent.Source is Control sourceItem
+                && sourceItem.TemplatedParent != AttachedControl)
+            {
+                var ancestors = sourceItem.GetSelfAndLogicalAncestors();
+                var target = ancestors.TakeWhile(x => x != AttachedControl).OfType<Control>().LastOrDefault();
 
-            if (target?.TemplatedParent == AttachedControl)
-                return null;
+                if (target?.TemplatedParent == AttachedControl)
+                    return null;
 
-            return target;
+                return target;
+            }
+        }
+
+        {
+            if (AttachedControl is TreeDataGrid treeDataGrid && triggerEvent.Source is Control sourceItem)
+            {
+                return sourceItem;
+            }
         }
 
         return null;
@@ -307,4 +345,6 @@ public class CollectionDropOperation : DropOperationBase
             DragEventArgs = e
         };
     }
+
+    protected virtual DropTargetOffset GetDropKind(DragEventArgs e) => DropTargetOffset.OnTarget;
 }

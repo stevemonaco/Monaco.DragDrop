@@ -4,7 +4,7 @@ using Avalonia.Media;
 using Avalonia.Layout;
 
 namespace Monaco.DragDrop;
-public class DropHighlightAdorner : DropAdornerBase
+public class DropHighlightAdorner(AdornerType dropAdornerType) : DropAdornerBase
 {
     static DropHighlightAdorner()
     {
@@ -26,6 +26,22 @@ public class DropHighlightAdorner : DropAdornerBase
         Width = rect.Width;
         Height = rect.Height;
         RenderTransform = new TranslateTransform(rect.X, rect.Y);
+        
+        switch (dropAdornerType)
+        {
+            case AdornerType.Solid:
+                this.Background = Brushes.Green;
+                this.BorderBrush = Brushes.DarkGreen;
+                break;
+            case AdornerType.Border:
+                this.Background = Brushes.Transparent;
+                this.BorderBrush = Brushes.Green;
+                break;
+            default:
+                this.Background = Brushes.Transparent;
+                this.BorderBrush = Brushes.Transparent;
+                break;
+        }
 
         Child = new TextBlock()
         {
