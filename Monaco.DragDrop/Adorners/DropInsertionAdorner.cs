@@ -15,6 +15,17 @@ namespace Monaco.DragDrop;
 /// </summary>
 public class DropInsertionAdorner : DropAdornerBase
 {
+    public static readonly StyledProperty<bool> SupportsChildInsertionProperty = AvaloniaProperty.Register<DropInsertionAdorner, bool>(
+        "SupportsChildInsertion");
+
+    public bool SupportsChildInsertion
+    {
+        get => GetValue(SupportsChildInsertionProperty);
+        set => SetValue(SupportsChildInsertionProperty, value);
+    }
+
+    public DropTargetOffset Target { get; set; } = DropTargetOffset.BeforeTarget;
+    
     static DropInsertionAdorner()
     {
         OpacityProperty.OverrideDefaultValue<DropInsertionAdorner>(0.7d);
@@ -44,6 +55,8 @@ public class DropInsertionAdorner : DropAdornerBase
         Height = 4;
 
         Debug.WriteLine($"Attach: {TargetControl.GetType().ToString()}");
+
+        this.Target = DropTargetOffset.BeforeTarget;
         //IsVisible = false;
 
         //TargetControl.RenderTransform = new TranslateTransform(0, 40);
@@ -117,24 +130,51 @@ public class DropInsertionAdorner : DropAdornerBase
 
         IsVisible = true;
 
-        if (dragLocation.Y < (Math.Floor(TargetControl.Bounds.Height / 2)))
+        if (SupportsChildInsertion)
         {
-            VerticalAlignment = VerticalAlignment.Top;
+            if (dragLocation.Y < (Math.Floor(TargetControl.Bounds.Height / 4)))
+            {
+                this.Target = DropTargetOffset.AfterTarget;
+                VerticalAlignment = VerticalAlignment.Top;
+            }
+            else if (dragLocation.Y > TargetControl.Bounds.Height - (Math.Floor(TargetControl.Bounds.Height / 4)))
+            {
+                this.Target = DropTargetOffset.BeforeTarget;
+                VerticalAlignment = VerticalAlignment.Bottom;
+            }
+            else
+            {
+                this.Target = DropTargetOffset.OnTarget;
+                VerticalAlignment = VerticalAlignment.Stretch;
+            }
         }
         else
         {
-            VerticalAlignment = VerticalAlignment.Bottom;
+            if (dragLocation.Y < (Math.Floor(this.TargetControl.Bounds.Height / 2)))
+            {
+                this.Target = DropTargetOffset.AfterTarget;
+                this.VerticalAlignment = VerticalAlignment.Top;
+            }
+            else
+            {
+                this.Target = DropTargetOffset.BeforeTarget;
+                this.VerticalAlignment = VerticalAlignment.Bottom;
+            }
         }
 
         // Half adorner thickness on each side
-        if (VerticalAlignment == VerticalAlignment.Top)
-            Margin = new Thickness(0, -2, 0, -2);
-        else if (VerticalAlignment == VerticalAlignment.Bottom)
-            Margin = new Thickness(0, -2, 0, -2);
 
         var parent = TargetControl.Parent;
-        
-
+        if (VerticalAlignment == VerticalAlignment.Stretch)
+        {
+            Margin = new Thickness(0);
+            Height = this.GetAdornerRect().Height;
+        }
+        else
+        {
+            Margin = new Thickness(0, -2, 0, -2);
+            Height = 4;
+        }
 
         UpdatePseudoclasses(VerticalAlignment == VerticalAlignment.Top);
     }
