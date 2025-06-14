@@ -314,8 +314,9 @@ public class CollectionDropOperation : DropOperationBase
 
             return target;
         }
-        
-        if (AttachedControl is TreeDataGrid && triggerEvent.Source is Control sourceTreeItem)
+
+        //if (AttachedControl is TreeDataGrid && triggerEvent.Source is Control sourceTreeItem)
+        if (AttachedControl is TreeView && triggerEvent.Source is Control sourceTreeItem)
         {
             return sourceTreeItem;
         }

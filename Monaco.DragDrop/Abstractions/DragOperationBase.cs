@@ -56,7 +56,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         if (e.Source is Control sourceControl && sourceControl.GetVisualAncestors().Any(x => x is ScrollBar))
             return;
 
-        var point = e.GetCurrentPoint(c);
+        var point = e.GetCurrentPoint(AttachedControl);
         if (point.Properties.IsLeftButtonPressed)
         {
             if (e.Source is Control control)
@@ -82,7 +82,7 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         if (_trackedControl is null || _dragOrigin is null)
             return;
 
-        var local = e.GetCurrentPoint(_trackedControl);
+        var local = e.GetCurrentPoint(AttachedControl);
         var delta = local.Position - _dragOrigin.Value;
         if (delta.X * delta.X + delta.Y * delta.Y < DragThreshold * DragThreshold)
             return;
@@ -128,7 +128,8 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
         {
             DragOperation = this,
             DragOrigin = _dragOrigin!.Value,
-            DragIds = InteractionIds.ToList()
+            DragIds = InteractionIds.ToList(),
+            PointerId = e.Pointer.Id
         };
     }
 

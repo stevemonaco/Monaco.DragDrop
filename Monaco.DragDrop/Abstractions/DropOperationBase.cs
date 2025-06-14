@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Avalonia.Styling;
 using Monaco.DragDrop.Adorners;
 using AvaDragDrop = Avalonia.Input.DragDrop;
+using System.Diagnostics;
 
 namespace Monaco.DragDrop.Abstractions;
 
@@ -141,6 +142,13 @@ public abstract partial class DropOperationBase : AvaloniaObject, IDropOperation
         DropAdorner?.Detach();
     }
 
+    /// <summary>
+    /// Invoked when a drag is over the AttachedControl
+    /// This event fires repeatedly while the drag is over the control, so it should
+    /// be reasonably efficient with validation
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     protected virtual void DragOver(object? sender, DragEventArgs e)
     {
         bool canDrop = CanDrop(e);

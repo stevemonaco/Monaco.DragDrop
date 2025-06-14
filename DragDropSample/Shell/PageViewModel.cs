@@ -3,5 +3,6 @@
 namespace DragDropSample.ViewModels;
 public partial class PageViewModel : ObservableObject
 {
-    [ObservableProperty] private string? _title;
+    [ObservableProperty]
+    public partial string? Title { get; set; }
 }

@@ -4,18 +4,35 @@ using CommunityToolkit.Mvvm.Input;
 namespace DragDropSample.ViewModels;
 public partial class SingleItemPageViewModel : PageViewModel
 {
-    [ObservableProperty] private string _mealChoiceA = "Pizza";
-    [ObservableProperty] private string _mealChoiceB = "Tacos";
-    [ObservableProperty] private string _mealChoiceC = "Steak";
-    [ObservableProperty] private string _mealChoiceD = "Salad";
+    [ObservableProperty]
+    public partial string MealChoiceA { get; set; } = "Pizza";
 
-    [ObservableProperty] private string _drinkChoiceA = "Water";
-    [ObservableProperty] private string _drinkChoiceB = "Tea";
-    [ObservableProperty] private string _drinkChoiceC = "Soda";
-    [ObservableProperty] private string _drinkChoiceD = "Juice";
+    [ObservableProperty]
+    public partial string MealChoiceB { get; set; } = "Tacos";
 
-    [ObservableProperty] private string? _selectedMeal;
-    [ObservableProperty] private string? _selectedDrink;
+    [ObservableProperty]
+    public partial string MealChoiceC { get; set; } = "Steak";
+
+    [ObservableProperty]
+    public partial string MealChoiceD { get; set; } = "Salad";
+
+    [ObservableProperty]
+    public partial string DrinkChoiceA { get; set; } = "Water";
+
+    [ObservableProperty]
+    public partial string DrinkChoiceB { get; set; } = "Tea";
+
+    [ObservableProperty]
+    public partial string DrinkChoiceC { get; set; } = "Soda";
+
+    [ObservableProperty]
+    public partial string DrinkChoiceD { get; set; } = "Juice";
+
+    [ObservableProperty]
+    public partial string? SelectedMeal { get; set; }
+
+    [ObservableProperty]
+    public partial string? SelectedDrink { get; set; }
 
     public SingleItemPageViewModel()
     {

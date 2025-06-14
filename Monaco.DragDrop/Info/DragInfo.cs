@@ -22,4 +22,9 @@ public class DragInfo
     /// Ids specified by the DragOperation
     /// </summary>
     public required IList<string> DragIds { get; init; }
+
+    /// <summary>
+    /// Id associated with the pointer that started the drag operation
+    /// </summary>
+    public int? PointerId { get; init; }
 }

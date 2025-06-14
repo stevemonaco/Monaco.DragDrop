@@ -3,7 +3,8 @@
 namespace DragDropSample.ViewModels.Nodes;
 public abstract partial class NodeViewModel : ObservableObject
 {
-    [ObservableProperty] private string _name;
+    [ObservableProperty]
+    public partial string Name { get; set; }
 
     public NodeViewModel(string name)
     {

@@ -1,0 +1,31 @@
+<UserControl
+    x:Class="DragDropSample.Views.FlatTreeDataGridPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cdd="using:DragDropSample.CustomDragDrop"
+    xmlns:con="using:DragDropSample.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="using:Monaco.DragDrop"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="using:DragDropSample.Resources"
+    xmlns:vm="using:DragDropSample.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:FlatTreeDataGridPageViewModel"
+    mc:Ignorable="d">
+    <TreeDataGrid x:Name="personTree" Source="{Binding PersonSource}">
+        <dd:DragDrop.DragOperation>
+            <dd:CollectionDragOperation
+                InteractionIds="app:person"
+                Payload="{Binding #personTree.RowSelection.SelectedItems}"
+                PayloadCollection="{Binding #personTree.DataContext.People}" />
+        </dd:DragDrop.DragOperation>
+        <dd:DragDrop.DropOperation>
+            <dd:CollectionDropOperation InteractionIds="app:person" PayloadTarget="{Binding #personTree.DataContext.People}">
+                <!--<dd:CollectionDropOperation.DropAdorner>
+                        <dd:DropInsertionAdorner />
+                    </dd:CollectionDropOperation.DropAdorner>-->
+            </dd:CollectionDropOperation>
+        </dd:DragDrop.DropOperation>
+    </TreeDataGrid>
+</UserControl>

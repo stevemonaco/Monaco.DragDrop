@@ -48,7 +48,7 @@
                 <dd:CollectionDragOperation
                     InteractionIds="app:node"
                     Payload="{Binding #box.SelectedItem}"
-                    PayloadCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableStaff}" />
+                    PayloadCollection="{Binding #root.((vm:ListBoxPageViewModel)DataContext).AvailableWorkers}" />
             </dd:DragDrop.DragOperation>
             <dd:DragDrop.DropOperation>
                 <dd:CollectionDropOperation InteractionIds="app:node" PayloadTarget="{Binding #root.((vm:TreeViewPageViewModel)DataContext).FlatItems}" />

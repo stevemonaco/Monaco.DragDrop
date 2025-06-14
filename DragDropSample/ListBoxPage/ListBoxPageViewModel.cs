@@ -7,18 +7,29 @@ using System.Linq;
 namespace DragDropSample.ViewModels;
 public partial class ListBoxPageViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<WorkerViewModel> _availableWorkers = [];
+    [ObservableProperty]
+    public partial ObservableCollection<WorkerViewModel> AvailableWorkers { get; set; } = [];
     public ObservableCollection<WorkerViewModel> MiningTeam { get; } = [];
     public ObservableCollection<WorkerViewModel> CraftingTeam { get; } = [];
     public ObservableCollection<WorkerViewModel> CombatTeam { get; } = [];
 
-    [ObservableProperty] private int _miningBudgetRemaining = _maxBudget;
-    [ObservableProperty] private int _craftingBudgetRemaining = _maxBudget;
-    [ObservableProperty] private int _combatBudgetRemaining = _maxBudget;
+    [ObservableProperty]
+    public partial int MiningBudgetRemaining { get; set; } = _maxBudget;
 
-    [ObservableProperty] private int _miningTeamProficiency;
-    [ObservableProperty] private int _craftingTeamProficiency;
-    [ObservableProperty] private int _combatTeamProficiency;
+    [ObservableProperty]
+    public partial int CraftingBudgetRemaining { get; set; } = _maxBudget;
+
+    [ObservableProperty]
+    public partial int CombatBudgetRemaining { get; set; } = _maxBudget;
+
+    [ObservableProperty]
+    public partial int MiningTeamProficiency { get; set; }
+
+    [ObservableProperty]
+    public partial int CraftingTeamProficiency { get; set; }
+
+    [ObservableProperty]
+    public partial int CombatTeamProficiency { get; set; }
 
     private const int _maxBudget = 20000;
 

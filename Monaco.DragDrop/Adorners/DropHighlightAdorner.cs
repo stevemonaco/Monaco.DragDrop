@@ -38,22 +38,18 @@ public class DropHighlightAdorner : DropAdornerBase
         Width = rect.Width;
         Height = rect.Height;
         RenderTransform = new TranslateTransform(rect.X, rect.Y);
-        
-        switch (_dropAdornerType)
+
+        if (IsDropValid)
         {
-            case DropAdornerKind.Solid:
-                Background = Brushes.Green;
-                BorderBrush = Brushes.DarkGreen;
-                break;
-            case DropAdornerKind.Border:
-                Background = Brushes.Transparent;
-                BorderBrush = Brushes.Green;
-                break;
-            case DropAdornerKind.None:
-            default:
-                Background = Brushes.Transparent;
-                BorderBrush = Brushes.Transparent;
-                break;
+            var (background, borderBrush) = _dropAdornerType switch
+            {
+                DropAdornerKind.Solid => (Brushes.Green, Brushes.DarkGreen),
+                DropAdornerKind.Border => (Brushes.Transparent, Brushes.DarkGreen),
+                DropAdornerKind.None or _ => (Brushes.Transparent, Brushes.Transparent)
+            };
+
+            SetCurrentValue(BackgroundProperty, background);
+            SetCurrentValue(BorderBrushProperty, borderBrush);
         }
 
         Child = new TextBlock()

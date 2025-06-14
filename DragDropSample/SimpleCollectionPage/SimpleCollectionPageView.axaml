@@ -21,7 +21,10 @@
     </UserControl.Styles>
 
     <Grid ColumnDefinitions="*,8,*">
-        <ListBox x:Name="leftBox" ItemsSource="{Binding LeftGuids}">
+        <ListBox
+            x:Name="leftBox"
+            ItemsSource="{Binding LeftGuids}"
+            SelectionMode="Multiple">
             <dd:DragDrop.DragOperation>
                 <dd:CollectionDragOperation
                     InteractionIds="app:guid"
@@ -40,7 +43,8 @@
         <ListBox
             x:Name="rightBox"
             Grid.Column="2"
-            ItemsSource="{Binding RightGuids}">
+            ItemsSource="{Binding RightGuids}"
+            SelectionMode="Multiple">
             <dd:DragDrop.DragOperation>
                 <dd:CollectionDragOperation
                     InteractionIds="app:guid"

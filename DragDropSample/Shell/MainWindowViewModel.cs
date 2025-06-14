@@ -11,10 +11,12 @@ public partial class MainWindowViewModel : ObservableObject
         new SingleItemPageViewModel(),
         new SimpleCollectionPageViewModel(),
         new ListBoxPageViewModel(),
-        new TreeViewPageViewModel()
+        new TreeViewPageViewModel(),
+        new FlatTreeDataGridPageViewModel()
     };
 
-    [ObservableProperty] private PageViewModel _selectedPage;
+    [ObservableProperty]
+    public partial PageViewModel SelectedPage { get; set; }
 
     public MainWindowViewModel()
     {
