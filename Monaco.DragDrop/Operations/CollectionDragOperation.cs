@@ -28,6 +28,7 @@ public class CollectionDragOperation : ItemDragOperation
 
     public CollectionDragOperation()
     {
+        Routing = RoutingStrategies.Tunnel;
         _handledEventsToo = true;
     }
 

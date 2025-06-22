@@ -57,12 +57,27 @@ public abstract partial class DragOperationBase : AvaloniaObject, IDragOperation
             return;
 
         var point = e.GetCurrentPoint(AttachedControl);
-        if (point.Properties.IsLeftButtonPressed)
+        if (!point.Properties.IsLeftButtonPressed)
+            return;
+
+        if (e.Source is Control control)
         {
-            if (e.Source is Control control)
+            if (control is ISelectable { IsSelected: true })
             {
                 _trackedControl = control;
                 _dragOrigin = point.Position;
+                e.Handled = true;
+            }
+            else if (control is ISelectable { IsSelected: false })
+            {
+                _trackedControl = null;
+                _dragOrigin = null;
+            }
+            else
+            {
+                _trackedControl = control;
+                _dragOrigin = point.Position;
+                e.Handled = true;
             }
         }
     }
